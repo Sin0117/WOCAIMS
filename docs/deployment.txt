@@ -1,0 +1,21 @@
+java sdk下载地址:
+http://www.oracle.com/technetwork/java/javase/downloads/jdk7u9-downloads-1859576.html
+
+play环境下载地址:
+http://download.playframework.org/releases/play-1.2.4.zip
+
+mongodb数据库下载地址:
+http://www.mongodb.org/downloads
+
+代码工具git下载地址:
+http://git-scm.com/
+
+代码地址:
+git://github.com/sjx/WOCAIMS.git
+
+1.下载java sdk、play、mongodb这3个工具，并安装（需要先安装java sdk），然后在系统环境变量中设置java_home，并把play的目录和monogodb的bin目录加入到path中。
+2.下载git工具，安装以后在git的指令行输入: git clone git://github.com/sjx/WOCAIMS.git， 获取代码。
+3.在系统指令行输入: mongod --dbpath ./data，启动数据库（也可以直接加到系统服务中）
+4.在系统指令行进入到代码放置的目录，执行play run WOCAIMS，启动项目。
+5.访问127.0.0.0:9000/init，进行初始化数据.
+6.管理员账号：Administrator 密码：!2#4QwEr

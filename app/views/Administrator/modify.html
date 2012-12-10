@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+%{
+    def user = controllers.Secure.getAdmin();
+}%
+<html>
+    <head>
+        <title>育龄妇女信息化管理系统</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" media="screen" href="@{'/public/javascripts/jquery-easyui-1.3.1/themes/default/easyui.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/javascripts/jquery-easyui-1.3.1/themes/icon.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        #{get 'moreStyles' /}
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+        <script src="@{'/public/javascripts/jquery-easyui-1.3.1/jquery-1.8.0.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/jquery-easyui-1.3.1/jquery.easyui.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/jquery-easyui-1.3.1/locale/easyui-lang-zh_CN.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        #{get 'moreScripts' /}
+    </head>
+    <body>
+		<div class="doc" id="modifySpace">
+			<h2>修改个人密码</h2>
+			<form id="modifyForm" action="@{Administrator.changePassword}" method="post" novalidate>
+			<input type="hidden" value="${admin.id}" name="id" />
+			<table>
+				<thead id="messageSpace" style="display:${message != null ? '' : 'none' };">
+					<tr><td colspan="2" align="center" class="modify-error">${message}</td></tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td align="right">老的密码：</td>
+						<td align="left"><input type="password" name="old" value="" class="easyui-validatebox" required="true" /></td>
+					</tr>
+					<tr>
+						<td align="right">新到密码：</td>
+						<td align="left"><input type="password" id="newPwd" name="pwd" value="" class="easyui-validatebox" required="true" /></td>
+					</tr>
+					<tr>
+						<td align="right">确认密码：</td>
+						<td align="left"><input type="password" id="validatePwd" value="" class="easyui-validatebox" required="true" /></td>
+					</tr>
+					<tr>
+						<td align="center" colspan="2" style="line-height: 24px; ">
+							<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doModifySave()">保存</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</form>
+		</div>
+	</body>
+	<script>
+		function doModifySave() {
+			var nPwd = $('#newPwd').val(), vPwd = $('#validatePwd').val(), isVali = true;
+			$('#modifyForm input').each(function () {
+				var $this = $(this);
+				if (!$this.val()) {
+					$('#messageSpace').show();
+					$('.modify-error').html('信息填写不完整！');
+					$this.focus();
+					isVali = false;
+				}
+			});
+			if (!isVali) return;
+			if (nPwd == vPwd) {
+				$('#modifyForm').submit();
+			} else {
+				$('#messageSpace').show();
+				$('.modify-error').html('2次密码输入不一致！');
+			}
+		}
+	</script>
+	<style type="text/css">  
+	    #fm {  
+	        margin:0;  
+	        padding:10px 30px;  
+	    }  
+	    .ftitle {  
+	        font-size:14px;  
+	        font-weight:bold;  
+	        color:#666;  
+	        padding:5px 0;  
+	        margin-bottom:10px;  
+	        border-bottom:1px solid #ccc;  
+	    }  
+	    .fitem {
+	        margin-bottom:5px;  
+	    }  
+	    .fitem label {
+	    	line-height: 21px;
+	    	vertical-align: top;
+	    	text-align: right; 
+	        display:inline-block;  
+	        width: 120px;
+	    }
+	    .fitem label.rd {
+	    	line-height: 21px;
+	    	vertical-align: top;
+	    	text-align: left; 
+	        display:inline-block;  
+	        width: 72px;
+	    }
+	    .fitem label.rd input {
+	    	margin-right: 4px;
+	    }
+	    .fitem span {
+	    	line-height: 21px; 
+	    }
+	    .easyui-dialog h2 {
+	    	margin: 8px 0px 8px;
+	    	border-bottom: 1px solid #cccccc;
+	    	padding: 4px 16px;
+	    }
+	</style>
+</html>

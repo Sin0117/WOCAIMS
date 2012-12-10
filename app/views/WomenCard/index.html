@@ -1,0 +1,647 @@
+#{extends 'frame_main.html' /}
+
+%{
+    def user = controllers.Secure.getAdmin();
+}%
+
+<div class="doc">
+	<table id="dg" title="育龄妇女基本信息管理" class="easyui-datagrid" style="width:800px;height:400px"  
+	        url="@{WomenCard.list(keyword, department)}" toolbar="#toolbar" pagination="true"  
+	        rownumbers="true" fitColumns="true" singleSelect="true">
+	    <thead>
+	        <tr>
+	            <th field="woman" width="64">姓名</th>
+	            <th field="womanCode" width="48">编码</th>  
+	            <th field="departmentName" width="64">单位</th>
+	            <th field="departmentCode" width="48">单位编码</th>
+	            <th field="createAt" width="72">建卡日期</th>
+	            <th field="hoursCode" width="48">户编码</th>
+	            <th field="measure" width="64">避孕节育状况</th>
+	            <th field="measureDate" width="72">开始日期</th>
+	        </tr>  
+	    </thead>  
+	</table>
+	
+	<div id="toolbar">
+		#{if user.isAdmin}
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNewCard('添加育龄妇女信息记录', '@{WomenCard.add}')">添加记录</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEditCard('修改育龄妇女信息记录', '@{WomenCard.update}')">修改记录</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这条育龄妇女信息记录吗？', '@{WomenCard.del}')">删除记录</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetailCard()">查看记录详情</a>
+	    #{/if}
+	    <a href="@{WomenCard.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="return doReport(this);">导出Excel</a>
+	</div>
+	
+	<div id="detail" class="easyui-dialog" style="width: 480px; height: 320px; padding: 10px 20px;" closed="true">
+		<div class="ftitle">育龄妇女基本信息</div>
+		<div class="fitem">  
+	            <label>姓名:</label><span id="detail_woman" />
+	        </div>
+	        <div class="fitem">  
+	            <label>编码:</label><span id="detail_womanCode" />
+	        </div>
+	        <div class="fitem">  
+	            <label>生日:</label><span id="detail_womanBirth" />
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label><span id="detail_womanNation" />
+	        </div>
+	        <div class="fitem">  
+	            <label>婚姻状况:</label><span id="detail_womanMarriage" />
+	        </div>
+	        <div class="fitem">  
+	            <label>初婚日期:</label><span id="detail_womanFirstMarriage" />
+	        </div>
+	        <div class="fitem">  
+	            <label>现婚日期:</label><span id="detail_womanCurrentMarriage" />
+	        </div>
+	        <div class="fitem">  
+	            <label>职业:</label><span id="detail_womanProfession" />
+	        </div>
+	        <div class="fitem">  
+	            <label>用工性质:</label><span id="detail_womanNature" />
+	        </div>
+	        <div class="fitem">  
+	            <label>文化程度:</label><span id="detail_womanCulture" />
+	        </div>
+	        <div class="fitem">  
+	            <label>户口性质:</label><span id="detail_womanProperties" />
+	        </div>
+	        <div class="fitem">  
+	            <label>户籍:</label><span id="detail_womanRegister" />
+	        </div>
+	        <div class="fitem">  
+	            <label>居住地址:</label><span id="detail_womanLive" />
+	        </div>
+	        <div class="fitem">  
+	            <label>居住性质:</label><span id="detail_womanLiveNature" />
+	        </div>
+	        <div class="fitem">  
+	            <label>流动性质:</label><span id="detail_womanFlowNature" />
+	        </div>
+	        <div class="fitem">  
+	            <label>流动日期:</label><span id="detail_womanFlowDate" />
+	        </div>
+	        <div class="fitem">  
+	            <label>流出地址:</label><span id="detail_womanFlowAddress" />
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label><span id="detail_departmentName" />
+	        </div>
+	        <div class="fitem">  
+	            <label>电话:</label><span id="detail_womanTel" />
+	        </div>
+	        <div class="fitem">  
+	            <label>身份证号:</label><span id="detail_womanIdentification" />
+	        </div>
+	        
+	        <h2>配偶信息</h2>
+	        <div class="fitem">  
+	            <label>姓名:</label><span id="detail_man" />
+	        </div>
+	        <div class="fitem">  
+	            <label>生日:</label><span id="detail_manBirth" />
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label><span id="detail_manNation" />
+	        </div>
+	        <div class="fitem">  
+	            <label>婚姻状况:</label><span id="detail_manMarriage" />
+	        </div>
+	        <div class="fitem">  
+	            <label>初婚日期:</label><span id="detail_manFirstMarriage" />
+	        </div>
+	        <div class="fitem">  
+	            <label>现婚日期:</label><span id="detail_manCurrentMarriage" />
+	        </div>
+	        <div class="fitem">  
+	            <label>职业:</label><span id="detail_manProfession" />
+	        </div>
+	        <div class="fitem">  
+	            <label>用工性质:</label><span id="detail_manNature" />
+	        </div>
+	        <div class="fitem">  
+	            <label>文化程度:</label><span id="detail_manCulture" />
+	        </div>
+	        <div class="fitem">  
+	            <label>户口性质:</label><span id="detail_manProperties" />
+	        </div>
+	        <div class="fitem">  
+	            <label>户籍:</label><span id="detail_manRegister" />
+	        </div>
+	        <div class="fitem">  
+	            <label>居住地址:</label><span id="detail_manLive" />
+	        </div>
+	        <div class="fitem">  
+	            <label>居住性质:</label><span id="detail_manLiveNature" />
+	        </div>
+	        <div class="fitem">  
+	            <label>流动性质:</label><span id="detail_manFlowNature" />
+	        </div>
+	        <div class="fitem">  
+	            <label>流动日期:</label><span id="detail_manFlowDate" />
+	        </div>
+	        <div class="fitem">  
+	            <label>流出地址:</label><span id="detail_manFlowAddress" />
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label><span id="detail_manWork" />
+	        </div>
+	        <div class="fitem">  
+	            <label>电话:</label><span id="detail_manTel" />
+	        </div>
+	        <div class="fitem">  
+	            <label>身份证号:</label><span id="detail_manIdentification" />
+	        </div>
+	        
+	        <h2>子女信息</h2>
+	        <ul id="detailChildrenList"></ul>
+	        
+	        <h2>节育措施信息</h2>
+	        <div class="fitem">  
+	            <label>节育措施:</label><span id="detail_measure" />
+	        </div>
+	        <div class="fitem">  
+	            <label>手术时间:</label><span id="detail_measureDate" />
+	        </div>
+	        
+	        <h2>独生子女信息</h2>
+	        <div class="fitem">  
+	            <label>领证时间:</label><span id="detail_date" />
+	        </div>
+	        <div class="fitem">  
+	            <label>独生子女证号码:</label><span id="detail_onlyChildrenCode" />
+	        </div>
+	        <div class="fitem">  
+	            <label>奖励兑现情况:</label><span id="detail_cash" />
+	        </div>
+	        
+	        <h2>其他信息</h2>
+	        <div class="fitem">  
+	            <label>户编码:</label><span id="detail_houseCode" />
+	        </div>
+	        <div class="fitem">  
+	            <label>备注:</label><span id="detail_notes" />
+	        </div>
+	</div>
+	  
+	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
+	    <div class="ftitle">育龄妇女基本信息登记</div>  
+	    <form id="fm" method="post" novalidate>
+	    	<h2>育龄妇女信息</h2>
+	        <div class="fitem">  
+	            <label>姓名:</label>  
+	            <input name="woman" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>编码:</label>  
+	            <input name="womanCode" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>生日:</label>  
+	            <input name="womanBirth" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label>  
+	            <input name="womanNation" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>婚姻状况:</label>  
+	            <input name="womanMarriage" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>初婚日期:</label>  
+	            <input name="womanFirstMarriage" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>现婚日期:</label>  
+	            <input name="womanCurrentMarriage" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>职业:</label>  
+	            <input name="womanProfession" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>用工性质:</label>  
+	            <input name="womanNature" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>文化程度:</label>  
+	            <input name="womanCulture" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>户口性质:</label>  
+	            <input name="womanProperties" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>户籍:</label>  
+	            <input name="womanRegister" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>居住地址:</label>  
+	            <input name="womanLive" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>居住性质:</label>  
+	            <input name="womanLiveNature" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流动性质:</label>  
+	            <input name="womanFlowNature" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流动日期:</label>  
+	            <input name="womanFlowDate" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流出地址:</label>  
+	            <input name="womanFlowAddress" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label>
+	            <select id="departmentSel" name="department">
+	            	#{list items: divisions, as: 'division'}
+	            	<option value="${division._id}">${division.name}</option>
+	            	#{/list}
+	            </select>
+	        </div>
+	        <div class="fitem">  
+	            <label>电话:</label>  
+	            <input name="womanTel" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>身份证号:</label>  
+	            <input name="womanIdentification" class="easyui-validatebox">  
+	        </div>
+	        
+	        <h2>配偶信息</h2>
+	        <div class="fitem">  
+	            <label>姓名:</label>  
+	            <input name="man" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>生日:</label>  
+	            <input name="manBirth" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label>  
+	            <input name="manNation" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>婚姻状况:</label>  
+	            <input name="manMarriage" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>初婚日期:</label>  
+	            <input name="manFirstMarriage" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>现婚日期:</label>  
+	            <input name="manCurrentMarriage" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>职业:</label>  
+	            <input name="manProfession" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>用工性质:</label>  
+	            <input name="manNature" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>文化程度:</label>  
+	            <input name="manCulture" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>户口性质:</label>  
+	            <input name="manProperties" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>户籍:</label>  
+	            <input name="manRegister" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>居住地址:</label>  
+	            <input name="manLive" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>居住性质:</label>  
+	            <input name="manLiveNature" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流动性质:</label>  
+	            <input name="manFlowNature" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流动日期:</label>  
+	            <input name="manFlowDate" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流出地址:</label>  
+	            <input name="manFlowAddress" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label>  
+	            <input name="manWork" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>电话:</label>  
+	            <input name="manTel" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>身份证号:</label>  
+	            <input name="manIdentification" class="easyui-validatebox">  
+	        </div>
+	        
+	        <h2>子女信息</h2>
+	        <ul id="childrenList"></ul>
+	        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" onclick="addChildren()">添加子女</a>
+	        <input type="hidden" id="childrenIpt" name="childrens" value="" />
+	        
+	        <h2>节育措施信息</h2>
+	        <div class="fitem">  
+	            <label>节育措施:</label>  
+	            <input name="measure" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>手术时间:</label>  
+	            <input name="measureDate" class="easyui-datebox">  
+	        </div>
+	        
+	        <h2>独生子女信息</h2>
+	        <div class="fitem">  
+	            <label>领证时间:</label>  
+	            <input name="date" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>独生子女证号码:</label>  
+	            <input name="onlyChildrenCode" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>奖励兑现情况:</label>  
+	            <input name="cash" class="easyui-validatebox">  
+	        </div>
+	        
+	        <h2>其他信息</h2>
+	        <div class="fitem">  
+	            <label>户编码:</label>  
+	            <input name="houseCode" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>备注:</label>  
+	            <input name="notes" class="easyui-validatebox">  
+	        </div>
+	    </form>  
+	</div>  
+	<div id="dlg-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doCardSave()">确定</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>  
+	</div>
+	
+	<!-- 子女相关的对话框. -->
+	<div id="children-detail" class="easyui-dialog" style="width: 400px; height: 280px; padding: 10px 20px;" closed="true">
+		<div class="ftitle">子女信息</div>
+        <div class="fitem">  
+            <label>姓名:</label>  
+            <span id="detail_children_name" />  
+        </div>
+        <div class="fitem">  
+            <label>孩次:</label>  
+            <span id="detail_children_size" />  
+        </div>
+        <div class="fitem">  
+            <label>民族:</label>  
+            <span id="detail_children_nation" />  
+        </div>
+        <div class="fitem">  
+            <label>准生证号:</label>  
+            <span id="detail_children_code" />  
+        </div>
+        <div class="fitem">  
+            <label>出生日期:</label>  
+            <span id="detail_children_birth" />  
+        </div>
+        <div class="fitem">  
+            <label>性别:</label>  
+            <span id="detail_children_gender" />  
+        </div>
+        <div class="fitem">  
+            <label>是否存活:</label>  
+            <span id="detail_children_survivalTxt" />  
+        </div>
+        <div class="fitem">  
+            <label>计划内外:</label>  
+            <span id="detail_children_planTxt" />  
+        </div>
+	</div>
+	  
+	<div id="children-dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#children-buttons">  
+	    <div class="ftitle">子女信息</div>  
+	    <form id="childrenForm" method="post" novalidate>
+	        <div class="fitem">  
+	            <label>姓名:</label>  
+	            <input name="name" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>孩次:</label>  
+	            <input name="size" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label>  
+	            <input name="nation" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>准生证号:</label>  
+	            <input name="code" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>出生日期:</label>  
+	            <input name="birth" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>性别:</label>
+	            <label class="rd"><input name="gender" type="radio" value="男" class="easyui-validatebox">男</label>
+	            <label class="rd"><input name="gender" type="radio" value="女" class="easyui-validatebox">女</label> 
+	        </div>
+	        <div class="fitem">  
+	            <label>是否存活:</label>
+	            <label class="rd"><input name="survival" type="radio" value="true" class="easyui-validatebox">存活</label>
+	            <label class="rd"><input name="survival" type="radio" value="false" class="easyui-validatebox">死亡</label> 
+	        </div>
+	        <div class="fitem">  
+	            <label>计划内外:</label>
+	            <label class="rd"><input name="plan" type="radio" value="true" class="easyui-validatebox">计划内</label>
+	            <label class="rd"><input name="plan" type="radio" value="false" class="easyui-validatebox">计划外</label> 
+	        </div>
+	    </form>  
+	</div>  
+	<div id="children-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doChildrenSave()">确定</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#children-dlg').dialog('close')">取消</a>  
+	</div>
+</div>
+<script>
+	/** 添加子女 */
+	function addChild() {
+		
+	}
+	/** 新建卡信息 */
+	function doNewCard(title, url) {
+		$('#dlg').dialog('open').dialog('setTitle', title);  
+        $('#fm').form('clear');
+        $('#departmentSel').val('${user.getId()}');
+        saveUrl = url;
+	}
+	/** 编辑卡信息 */
+	function doEditCard(title, url) {
+		var row = $('#dg').datagrid('getSelected');  
+        if (row) {  
+            $('#dlg').dialog('open').dialog('setTitle', title);  
+            $('#fm').form('load', row);
+            if (!row.department)
+	            $('#departmentSel').val(row.id);
+            else
+            	$('#departmentSel').val(row.department.id);
+            saveUrl = url + '?id='+row.id;
+            $('#childrenList').html('');
+            if (!!row['childrens'] && !!row.childrens.length) {
+				for (var i = 0, children; children = row.childrens[i]; i ++) {
+	            	renderChildren(children.name, children.size, children.nation, children.code, 
+	            			children.birth, children.gender, children.survival, children.plan, children.id);	
+				}
+            }
+        }  
+	}
+	/** 查看详情 */
+	function doDetailCard() {
+		var row = $('#dg').datagrid('getSelected');  
+        if (row) {  
+        	$('#detail').dialog('open').dialog('setTitle', row.woman);
+        	$('#detailChildrenList').html('');
+        	for (var column in row) {
+        		var val = row[column];
+        		if (typeof val == 'object') {
+        			if (column == 'childrens') {
+						for (var i = 0, children; children = val[i]; i ++)
+		            		renderChildrenDetail(children.name, children.size, children.nation,
+		            				children.code, children.birth, children.gender, 
+		            				children.survival, children.plan, children.id);
+        			}
+        		} else {
+        			val = $.trim(val);
+        			$('#detail_' + column).text(val || '暂无');
+        		}
+        	}
+        	if (!row['childrens'] || !row['childrens'].length)
+        		$('#detailChildrenList').html('<li>暂无</li>');
+        }
+	}
+	/** 保存卡信息 */
+	function doCardSave() {
+		$('#fm').form('submit',{  
+            url: saveUrl,
+            dataType: 'text',
+            onSubmit: function() {
+            	var val = [], childrenIpt = $('#childrenIpt');
+            	$('#childrenList li').each(function () {
+            		var liVal = [], $this = $(this);
+            		liVal.push($this.data('name'));
+            		liVal.push($this.data('size'));
+            		liVal.push($this.data('nation'));
+            		liVal.push($this.data('code'));
+            		liVal.push($this.data('birth'));
+            		liVal.push($this.data('gender'));
+            		liVal.push($this.data('survival'));
+            		liVal.push($this.data('plan'));
+            		liVal.push($this.data('childrenid'));
+   					val.push(liVal.join('#,#'));
+            	});
+            	childrenIpt.val(val.join('#S#'));
+                return $(this).form('validate');  
+            },  
+            success: function(result){  
+                var result = eval('('+result+')');  
+                if (result.error){  
+                    $.messager.show({  
+                        title: 'Error',  
+                        msg: result.error  
+                    });  
+                } else {  
+                    $('#dlg').dialog('close');      // close the dialog  
+                    $('#dg').datagrid('reload');    // reload the user data  
+                }  
+            }  
+        });  
+	}
+	/** 保存子女信息. */
+	function doChildrenSave() {
+		var newChildren = $('#childrenForm').serialize();
+		if (newChildren.length > 32) {
+			var arr = newChildren.split('&'), arrVal = [];
+			for (var i = 0, str; str = arr[i]; i ++)
+				arrVal.push(str.split('=')[1]);
+			renderChildren(arrVal[0], arrVal[1], arrVal[2], arrVal[3], arrVal[4], arrVal[5], 
+					arrVal[6], arrVal[7], arrVal[8]);
+			$('#children-dlg').dialog('close');
+		}
+	}
+	/** 渲染子女信息. */
+	function renderChildren(name, size, nation, code, birth, gender, survival, plan, id) {
+		var list = $('#childrenList'), newItem = _renderChildren(name, size, nation, code, birth, gender, survival, plan, id);
+		newItem.push(name + '(' + code + ')');
+		newItem.push('<a href="javascript:void(0)" onclick="removeChildren(this.parentNode)" title="删除子女记录">X</a>');
+		newItem.push('</li>');
+		list.append(newItem.join(''));
+	}
+	
+	function renderChildrenDetail(name, size, nation, code, birth, gender, survival, plan, id) {
+		var list = $('#detailChildrenList'), newItem = _renderChildren(name, size, nation, code, birth, gender, survival, plan, id);
+		newItem.push(name + '(' + code + ')');
+		newItem.push('<a href="javascript:void(0)" onclick="doDetailChildren(this.parentNode)" title="查看子女记录">查看</a>');
+		newItem.push('</li>');
+		list.append(newItem.join(''));
+	}
+	
+	/** render children of data. */
+	function _renderChildren(name, size, nation, code, birth, gender, survival, plan, id) {
+		return ['<li ',
+	             '" data-name="', name,
+	             '" data-size="', size,
+	             '" data-nation="', nation,
+	             '" data-code="', code,
+	             '" data-birth="', birth,
+	             '" data-gender="', gender,
+	             '" data-survival="', survival,
+	             '" data-plan="', plan,
+	             '" data-childrenid="', id,
+	             '">'];
+	}
+	/** 删除子女操作 */
+	function removeChildren(elem) {
+		$(elem).remove();
+	}
+	/** 添加子女信息 */
+	function addChildren() {
+		$('#children-dlg').dialog('open').dialog('setTitle', "添加子女信息");  
+        $('#childrenForm').form('clear');
+	}
+	/** show children detail of new dialog. */
+	function doDetailChildren(row) {
+		row = $(row);
+		$('#children-detail').dialog('open').dialog('setTitle', row.data('name') || '检查项详情');
+		$('#detail_children_name').html(row.data('name'));
+		$('#detail_children_size').html(row.data('size'));
+		$('#detail_children_nation').html(row.data('nation'));
+		$('#detail_children_code').html(row.data('code'));
+		$('#detail_children_birth').html(row.data('birth'));
+		$('#detail_children_gender').html(row.data('gender'));
+		$('#detail_children_survivalTxt').html(row.data('survival') ? '存活' : '死亡');
+		$('#detail_children_planTxt').html(row.data('plan') ? '计划内' : '计划外');
+	}
+</script>
+<style>
+	#detailChildrenList, #childrenList { list-style: none; }
+	#detailChildrenList li, #childrenList li { margin: 4px 8px; }
+	#childrenList li a { color: #F33; float: right; margin: 0 4px 0 0px; }
+	#detailChildrenList li a { color: #33F; float: right; margin: 0 4px 0 0px; }
+</style>
+

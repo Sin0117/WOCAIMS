@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+%{
+    def user = controllers.Secure.getAdmin();
+    def departments = controllers.Secure.getDepartments();
+}%
+<html>
+    <head>
+        <title>育龄妇女信息化管理系统</title>
+        <meta charset="${_response_encoding}">
+        <link rel="stylesheet" media="screen" href="@{'/public/javascripts/jquery-easyui-1.3.1/themes/default/easyui.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/javascripts/jquery-easyui-1.3.1/themes/icon.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        #{get 'moreStyles' /}
+        <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+        <script src="@{'/public/javascripts/jquery-easyui-1.3.1/jquery-1.8.0.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/jquery-easyui-1.3.1/jquery.easyui.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/jquery-easyui-1.3.1/locale/easyui-lang-zh_CN.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        #{get 'moreScripts' /}
+    </head>
+    <body>
+    	<form id="searchForm" method="get" action="./index">
+    		<label>搜索：<input type="text" id="keyword" name="keyword" value="${keyword}" /></label>
+    		<label>部门：<select name="department">
+    			<option value="">全部</option>
+    			#{list items: departments, as: 'dep'}
+    			<option value="${dep._id}">${dep.name}</option>
+    			#{/list}
+    		</select></label>
+    		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch()">搜索</a>
+    	</form>
+        #{doLayout /}
+    </body>
+    <script type="text/javascript">  
+	    var saveUrl;  
+	    function doNew(title, url){  
+	        $('#dlg').dialog('open').dialog('setTitle', title);  
+	        $('#fm').form('clear');
+	        $('#departmentSel').val('${user.getId()}');
+	        saveUrl = url;  
+	    }  
+	    function doEdit(title, url){  
+	        var row = $('#dg').datagrid('getSelected');  
+	        if (row) {  
+	            $('#dlg').dialog('open').dialog('setTitle', title);  
+	            $('#fm').form('load', row);
+	            if (!row.department) {
+		            $('#departmentSel').val(row.id);
+	            } else {
+	            	$('#departmentSel').val(row.department.id);
+	            }
+	            saveUrl = url + '?id='+row.id;  
+	        }  
+	    }  
+	    function doSave(){  
+	        $('#fm').form('submit',{  
+	            url: saveUrl,
+	            dataType: 'text',
+	            onSubmit: function(){  
+	                return $(this).form('validate');  
+	            },  
+	            success: function(result){  
+	                var result = eval('('+result+')');  
+	                if (result.error){  
+	                    $.messager.show({  
+	                        title: 'Error',  
+	                        msg: result.error  
+	                    });  
+	                } else {  
+	                    $('#dlg').dialog('close');      // close the dialog  
+	                    $('#dg').datagrid('reload');    // reload the user data  
+	                }  
+	            }  
+	        });  
+	    }
+	    function doReport(elem) {
+	    	var row = $('#dg').datagrid('getSelected');  
+	        if (row) {
+	        	elem = $(elem);
+	        	var url = elem.attr("href");
+	        	if (url.indexOf('?') != -1) {
+	        		url += '&id=' + row.id;
+	        	} else {
+	        		url += '?id=' + row.id;
+	        	}
+	        	location.href = url
+	        }
+	        return false;
+	    }
+	    function doDetail() {
+	    	var row = $('#dg').datagrid('getSelected');  
+	        if (row) {
+	        	$('#detail').dialog('open').dialog('setTitle', row.name);
+	        	for (var column in row) {
+	        		var val = $.trim(row[column]);
+	        		if (typeof val == 'object') {
+	        			for (var child in val) {
+	        				var childObj = val[child];
+	        				$('#detail_' + val + '_' + child).text(val || '暂无');
+	        			}
+	        		} else {
+	        			$('#detail_' + column).text(val || '暂无');
+	        		}
+	        	}
+	        }
+	    }
+	    function doDestroy(msg, url){  
+	        var row = $('#dg').datagrid('getSelected');
+	        if (row){  
+	            $.messager.confirm('Confirm', msg, function(r){  
+	                if (r){  
+	                    $.post(url, {id: row.id}, function(result){  
+	                        if (result.success){  
+	                            $('#dg').datagrid('reload');    // reload the user data  
+	                        } else {  
+	                            $.messager.show({   // show error message  
+	                                title: 'Error',  
+	                                msg: result.error  
+	                            });  
+	                        }  
+	                    },'json');  
+	                }  
+	            });
+	        }  
+	    }
+	    /** search list of current department or keywork. */
+	    function doSearch() {
+	    	$('#searchForm').submit();
+	    }
+	</script>  
+	<style type="text/css">  
+	    #fm {  
+	        margin:0;  
+	        padding:10px 30px;  
+	    }  
+	    .ftitle {  
+	        font-size:14px;  
+	        font-weight:bold;  
+	        color:#666;  
+	        padding:5px 0;  
+	        margin-bottom:10px;  
+	        border-bottom:1px solid #ccc;  
+	    }  
+	    .fitem {
+	        margin-bottom:5px;  
+	    }  
+	    .fitem label {
+	    	line-height: 21px;
+	    	vertical-align: top;
+	    	text-align: right; 
+	        display:inline-block;  
+	        width: 120px;
+	    }
+	    .fitem label.rd {
+	    	line-height: 21px;
+	    	vertical-align: top;
+	    	text-align: left; 
+	        display:inline-block;  
+	        width: 72px;
+	    }
+	    .fitem label.rd input {
+	    	margin-right: 4px;
+	    }
+	    .fitem span {
+	    	line-height: 21px; 
+	    }
+	    .easyui-dialog h2 {
+	    	margin: 8px 0px 8px;
+	    	border-bottom: 1px solid #cccccc;
+	    	padding: 4px 16px;
+	    }
+	</style>
+</html>

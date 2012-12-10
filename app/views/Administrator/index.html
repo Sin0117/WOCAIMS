@@ -1,0 +1,63 @@
+#{extends 'frame_main.html' /}
+
+%{
+    def user = controllers.Secure.getAdmin();
+}%
+
+<div class="doc">
+	<table id="dg" title="部门人员管理" class="easyui-datagrid" style="width:800px;height:400px"  
+	        url="@{Administrator.list(keyword, department)}" toolbar="#toolbar" pagination="true"  
+	        rownumbers="true" fitColumns="true" singleSelect="true">  
+	    <thead>  
+	        <tr>  
+	            <th field="departmentName" width="72">部门名称</th>  
+	            <th field="login" width="96">登录帐号</th>  
+	            <th field="name" width="96">人员姓名</th>  
+	            <th field="type" width="50">职务</th>
+	            <th field="createAt" width="72">创建时间</th>
+	            <th field="lastLoginAt" width="72">最后登录时间</th>
+	        </tr>  
+	    </thead>  
+	</table>
+	
+	<div id="toolbar">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNew('添加人员', '@{Administrator.add}')">添加人员</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('调整人员', '@{Administrator.update}')">调整人员</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这个人员吗？', '@{Administrator.del}')">删除人员</a>  
+	</div>  
+	  
+	<div id="dlg" class="easyui-dialog" style="width:400px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
+	    <div class="ftitle">人员信息</div>  
+	    <form id="fm" method="post" novalidate>
+	    	<div class="fitem">  
+	            <label>登录帐号:</label>  
+	            <input name="login" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>人员名称:</label>  
+	            <input name="name" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>初始密码:</label>  
+	            <input type="password" name="password" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">
+	            <label>职务类型:</label>
+	            <label class="rd"><input name="admin" type="radio" value="true" checked="checked">干事人员</label>
+	            <label class="rd"><input name="admin" type="radio" value="false">审核人员</label>
+	        </div>
+	        <div class="fitem">  
+	            <label>所属部门:</label>
+	            <select id="departmentSel" name="department" required="true">
+	            	#{list items: divisions, as: 'division'}
+	            	<option value="${division._id}">${division.name}</option>
+	            	#{/list}
+	            </select>
+	        </div>
+	    </form>  
+	</div>  
+	<div id="dlg-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doSave()">确定</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>  
+	</div>
+</div>

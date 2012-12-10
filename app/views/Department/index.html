@@ -1,0 +1,58 @@
+#{extends 'frame_main.html' /}
+
+%{
+    def user = controllers.Secure.getAdmin();
+}%
+
+<div class="doc">
+	<table id="dg" title="部门管理" class="easyui-datagrid" style="width:800px;height:400px"  
+	        url="@{Department.list(keyword, department)}" toolbar="#toolbar" pagination="true"  
+	        rownumbers="true" fitColumns="true" singleSelect="true">  
+	    <thead>  
+	        <tr>  
+	            <th field="name" width="96">部门名称</th>  
+	            <th field="code" width="50">部门编号</th>  
+	            <th field="typeName" width="50">部门类型</th>
+	            <th field="parentName" width="96">上级部门</th>
+	            <th field="createAt" width="72">创建时间</th>  
+	        </tr>  
+	    </thead>  
+	</table>
+	
+	<div id="toolbar">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNew('新建部门', '@{Department.add}')">新建部门</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('修改部门', '@{Department.update}')">修改部门</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这个部门吗？包括下级部门以及部门管理员。', '@{Department.del}')">删除部门</a>  
+	</div>  
+	  
+	<div id="dlg" class="easyui-dialog" style="width:400px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
+	    <div class="ftitle">部门信息</div>  
+	    <form id="fm" method="post" novalidate>  
+	        <div class="fitem">  
+	            <label>部门名称:</label>  
+	            <input name="name" class="easyui-validatebox" required="true">  
+	        </div>  
+	        <div class="fitem">  
+	            <label>部门编号:</label>  
+	            <input name="code" class="easyui-validatebox" required="true">  
+	        </div>  
+	        <div class="fitem">
+	            <label>部门类型:</label>
+	            <label class="rd"><input name="type" type="radio" value="DIVISION">处级</label>
+	            <label class="rd"><input name="type" type="radio" value="SECTION">科级</label>
+	        </div>
+	        <div class="fitem">  
+	            <label>上级部门:</label>
+	            <select id="parentDep" name="parent" required="true">
+	            	#{list items: divisions, as: 'division'}
+	            	<option value="${division._id}">${division.name}</option>
+	            	#{/list}
+	            </select>
+	        </div>
+	    </form>  
+	</div>  
+	<div id="dlg-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doSave()">确定</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>  
+	</div>
+</div>

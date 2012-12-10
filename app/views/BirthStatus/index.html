@@ -1,0 +1,163 @@
+#{extends 'frame_main.html' /}
+
+%{
+    def user = controllers.Secure.getAdmin();
+}%
+
+<div class="doc">
+	<table id="dg" title="出生登记管理" class="easyui-datagrid" style="width:800px;height:400px"  
+	        url="@{BirthStatus.list(keyword, department)}" toolbar="#toolbar" pagination="true"  
+	        rownumbers="true" fitColumns="true" singleSelect="true">
+	    <thead>
+	        <tr>
+	            <th field="man" width="64">男方姓名</th>
+	            <th field="woman" width="64">女方姓名</th>  
+	            <th field="departmentName" width="72">单位</th>
+	            <th field="departmentName" width="64">姓名</th>
+	            <th field="size" width="32">孩次</th>
+	            <th field="gender" width="32">性别</th>
+	            <th field="nation" width="64">民族</th>
+	            <th field="code" width="72">准生证号</th>
+	            <th field="survivalTxt" width="64">是否存活</th>
+	            <th field="planTxt" width="64">计划内外</th>
+	            <th field="birth" width="72">出生日期</th>
+	            <th field="notes" width="72">备注</th>
+	        </tr>  
+	    </thead>  
+	</table>
+	
+	<div id="toolbar">
+		#{if user.isAdmin}
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNew('新建出生记录', '@{BirthStatus.add}')">添加出生记录</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('修改出生记录', '@{BirthStatus.update}')">修改出生记录</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这条出生记录吗？', '@{BirthStatus.del}')">删除出生记录</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetail()">查看记录详情</a>
+	    #{/if}
+	    <a href="@{BirthStatus.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true">导出Excel</a>  
+	</div>
+	
+	<div id="detail" class="easyui-dialog" style="width: 480px; height: 320px; padding: 10px 20px;" closed="true">
+		<div class="ftitle">出生记录</div>
+		<div class="fitem">  
+            <label>女方姓名:</label>  
+            <span id="detail_woman" />  
+        </div>  
+        <div class="fitem">  
+            <label>男方姓名:</label>  
+            <span id="detail_man" />  
+        </div>
+        <div class="fitem">  
+            <label>子女姓名:</label>  
+            <span id="detail_name" />  
+        </div>
+        <div class="fitem">  
+            <label>孩次:</label>  
+            <span id="detail_size" />  
+        </div>
+        <div class="fitem">  
+            <label>民族:</label>  
+            <span id="detail_nation" />  
+        </div>
+        <div class="fitem">  
+            <label>准生证号:</label>  
+            <span id="detail_code" />  
+        </div>
+        <div class="fitem">  
+            <label>出生日期:</label>  
+            <span id="detail_birth" />  
+        </div>
+        <div class="fitem">  
+            <label>性别:</label>  
+            <span id="detail_gender" />  
+        </div>
+        <div class="fitem">  
+            <label>是否存活:</label>  
+            <span id="detail_survivalTxt" />  
+        </div>
+        <div class="fitem">  
+            <label>计划内外:</label>  
+            <span id="detail_planTxt" />  
+        </div>
+        <div class="fitem">  
+            <label>记录添加时间:</label>  
+            <span id="detail_createAt" />  
+        </div>
+        <div class="fitem">  
+            <label>记录修改时间:</label>  
+            <span id="detail_modifyAt" />  
+        </div>
+        <div class="fitem">  
+            <label>备注:</label>
+            <span id="detail_notes" />
+        </div>
+        <div class="fitem">  
+            <label>工作单位:</label>
+            <span id="detail_departmentName" />
+        </div>
+	</div>
+	  
+	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
+	    <div class="ftitle">出生登记</div>  
+	    <form id="fm" method="post" novalidate>
+	        <div class="fitem">  
+	            <label>男方姓名:</label>  
+	            <input name="man" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>女方姓名:</label>  
+	            <input name="woman" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>子女姓名:</label>  
+	            <input name="name" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>孩次:</label>  
+	            <input name="size" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label>  
+	            <input name="nation" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>准生证号:</label>  
+	            <input name="code" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>出生日期:</label>  
+	            <input name="birth" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>性别:</label>
+	            <label class="rd"><input name="gender" type="radio" value="男" class="easyui-validatebox">男</label>
+	            <label class="rd"><input name="gender" type="radio" value="女" class="easyui-validatebox">女</label> 
+	        </div>
+	        <div class="fitem">  
+	            <label>是否存活:</label>
+	            <label class="rd"><input name="survival" type="radio" value="true" class="easyui-validatebox">存活</label>
+	            <label class="rd"><input name="survival" type="radio" value="false" class="easyui-validatebox">死亡</label> 
+	        </div>
+	        <div class="fitem">  
+	            <label>计划内外:</label>
+	            <label class="rd"><input name="plan" type="radio" value="true" class="easyui-validatebox">计划内</label>
+	            <label class="rd"><input name="plan" type="radio" value="false" class="easyui-validatebox">计划外</label> 
+	        </div>
+	        <div class="fitem">  
+	            <label>备注:</label>
+	            <input name="notes" class="easyui-validatebox" />
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label>
+	            <select id="departmentSel" name="department">
+	            	#{list items: divisions, as: 'division'}
+	            	<option value="${division._id}">${division.name}</option>
+	            	#{/list}
+	            </select>
+	        </div>
+	    </form>  
+	</div>  
+	<div id="dlg-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doSave()">确定</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>  
+	</div>
+</div>

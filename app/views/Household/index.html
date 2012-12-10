@@ -1,0 +1,180 @@
+#{extends 'frame_main.html' /}
+
+%{
+    def user = controllers.Secure.getAdmin();
+}%
+
+<div class="doc">
+	<table id="dg" title="户信息管理" class="easyui-datagrid" style="width:800px;height:400px"  
+	        url="@{Household.list(keyword, department)}" toolbar="#toolbar" pagination="true"  
+	        rownumbers="true" fitColumns="true" singleSelect="true">
+	    <thead>
+	    	<tr>
+	    		<th colspan="5">户基本信息</th>
+	    		<th colspan="2">人口信息</th>
+	    		<th colspan="2">人口流动</th>
+	    		<th colspan="3">少数民族人口信息</th>
+	    		<th colspan="3">其他</th>
+	    	</tr>
+	        <tr>
+	            <th field="user" width="48">户主</th>  
+	            <th field="code" width="40">编码</th>
+	            <th field="departmentName" width="72">工作单位</th>
+	            <th field="live" width="72">地区属性</th>
+	            <th field="register" width="72">户籍</th>
+	            <th field="peoples" width="32">人数</th>
+	            <th field="pregnant" width="32">育龄</th>
+	            <th field="into" width="32">流入</th>
+	            <th field="out" width="32">流出</th>
+	            <th field="minority" width="36">人数</th>
+	            <th field="minorityInto" width="36">流入</th>
+	            <th field="minorityOut" width="36">流出</th>
+	            <th field="notes" width="50">备注</th>
+	        </tr>  
+	    </thead>  
+	</table>
+	
+	<div id="toolbar">
+		#{if user.isAdmin}
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNew('新建户信息', '@{Household.add}')">新建户信息</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('修改户信息', '@{Household.update}')">修改户信息</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这个户信息吗？', '@{Household.del}')">删除户信息</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetail()">查看详情</a>
+	    #{/if}
+	    <a href="@{Household.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="return doReport(this);">导出Excel</a>  
+	</div>
+	
+	<div id="detail" class="easyui-dialog" style="width: 480px; height: 320px; padding: 10px 20px;" closed="true">
+		<div class="ftitle">户信息</div>
+		<h2>户基本信息：</h2>
+		<div class="fitem">  
+            <label>户主：</label>  
+            <span id="detail_user" />  
+        </div>  
+        <div class="fitem">  
+            <label>户编码：</label>  
+            <span id="detail_code" />  
+        </div>
+        <div class="fitem">  
+            <label>地区属性：</label>  
+            <span id="detail_live" />  
+        </div>
+        <div class="fitem">  
+            <label>户籍：</label>  
+            <span id="detail_register" />  
+        </div>
+        <h2>户人口：</h2>
+        <div class="fitem">  
+            <label>人口数：</label>  
+            <span id="detail_peoples" />  
+        </div>
+        <div class="fitem">  
+            <label>育龄妇女数：</label>  
+            <span id="detail_pregnant" />  
+        </div>
+        <div class="fitem">  
+            <label>人口流入：</label>  
+            <span id="detail_into" />  
+        </div>
+        <div class="fitem">  
+            <label>人口流出：</label>  
+            <span id="detail_out" />  
+        </div>
+        
+        <h2>少数民族：</h2>
+        <div class="fitem">  
+            <label>人口数：</label>  
+            <span id="detail_minority" />  
+        </div>
+        <div class="fitem">  
+            <label>人口流入:</label>  
+            <span id="detail_minorityInto" />  
+        </div>
+        <div class="fitem">  
+            <label>人口流出:</label>  
+            <span id="detail_minorityOut" />  
+        </div>
+        <div class="fitem">  
+            <label>记录添加时间:</label>  
+            <span id="detail_createAt" />  
+        </div>
+        <div class="fitem">  
+            <label>记录修改时间:</label>  
+            <span id="detail_modifyAt" />  
+        </div>
+        <div class="fitem">  
+            <label>备注:</label>
+            <span id="detail_notes" />
+        </div>
+        <div class="fitem">  
+            <label>工作单位:</label>
+            <span id="detail_departmentName" />
+        </div>
+	</div>
+	  
+	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
+	    <div class="ftitle">户信息</div>  
+	    <form id="fm" method="post" novalidate>  
+	        <div class="fitem">  
+	            <label>户主:</label>  
+	            <input name="user" class="easyui-validatebox" required="true">  
+	        </div>  
+	        <div class="fitem">  
+	            <label>编码:</label>  
+	            <input name="code" class="easyui-validatebox" required="true">  
+	        </div>
+	        <div class="fitem">  
+	            <label>地区属性:</label>  
+	            <input name="live" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>户籍:</label>  
+	            <input name="register" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>人口数:</label>  
+	            <input name="peoples" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>育龄人数:</label>  
+	            <input name="pregnant" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流入人口:</label>  
+	            <input name="into" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流出人口:</label>  
+	            <input name="out" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>少数民族:</label>  
+	            <input name="minority" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>少数民族流入人口:</label>  
+	            <input name="minorityInto" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>少数民族流出人口:</label>  
+	            <input name="minorityOut" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>备注:</label>
+	            <textarea name="notes" class="easyui-validatebox"></textarea>
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label>
+	            <select id="departmentSel" name="department">
+	            	#{list items: divisions, as: 'division'}
+	            	<option value="${division._id}">${division.name}</option>
+	            	#{/list}
+	            </select>
+	        </div>
+	    </form>  
+	</div>  
+	<div id="dlg-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doSave()">确定</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>  
+	</div>
+</div>

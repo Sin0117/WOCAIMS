@@ -1,0 +1,69 @@
+#{extends 'main.html' /}
+
+<div id="main">
+	<div id="headerSpace">育龄妇女信息化管理系统</div>
+	<div id="loginSpace">
+		<table>
+			#{if error != null }
+				<thead>
+					<tr><td colspan="2" align="center" class="login-error">${error}</td></tr>
+				</thead>
+			#{/if}
+			<form id="loginForm" action="/login" method="post">
+			<tbody>
+				<tr>
+					<td align="right">管理员姓名：</td>
+					<td align="left"><input type="text" name="name" value="" /></td>
+				</tr>
+				<tr>
+					<td align="right">管理员密码：</td>
+					<td align="left"><input type="password" name="password" value="" /></td>
+				</tr>
+				<tr>
+					<td align="center" colspan="2" style="line-height: 24px; "><a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doLogin()">登录</a></td>
+				</tr>
+			</tbody>
+			</form>
+		</table>
+	</div>
+	<div id="footerSpace">Copyright © 2010-2012</div>
+</div>
+    	
+<script>
+	(function (win, $) {
+		
+		$(win).bind({
+			resize: function (evt) {
+				doLayout();
+			}
+		});
+		
+		$('#menuSpace a').bind({
+			click: function () {
+				$('#menuSpace a').removeClass('on');
+				this.className = 'on';
+			}
+		})
+		
+		$(function () {
+			
+			
+			doLayout();
+		})
+		
+	})(window, jQuery);
+	
+	function doLogin() {
+		$('#loginForm').submit();
+	}
+	function doLayout() {
+		var $win = $(window), fh = $win.height() - 88, fw = $win.width() - 220;
+		
+		$('#main').height($win.height());
+		$('#loginSpace').height(fh);
+		$('#footerSpace').css({
+			top: fh + 48 + 'px'
+		})
+		
+	}
+</script>
