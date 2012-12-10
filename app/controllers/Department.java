@@ -41,7 +41,7 @@ public class Department extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.Department.count());
 		result.put("size", rows);
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 添加操作 */
@@ -50,7 +50,7 @@ public class Department extends Controller {
 		models.Department existDep = isExist(name, code, null);
 		if (parent == null || "".equals(parent)) {
 			result.put("error", "部门添加失败，请选择该部门所属部门。");
-			renderJSON(result);
+			renderText(result);
 		}
 		if (existDep != null) {
 			result.put("error", "部门添加失败，" + existDep.name + "(" + existDep.code + ")部门已经存在！");
@@ -67,7 +67,7 @@ public class Department extends Controller {
 			}
 			newDep.save();
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 删除操作 */
@@ -81,7 +81,7 @@ public class Department extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 修改操作 */
@@ -89,7 +89,7 @@ public class Department extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (parent == null || "".equals(parent)) {
 			result.put("error", "部门添加失败，请选择该部门所属部门。");
-			renderJSON(result);
+			renderText(result);
 		}
 		try {
 			models.Department cur = models.Department.findById(id);
@@ -112,7 +112,7 @@ public class Department extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	@Util

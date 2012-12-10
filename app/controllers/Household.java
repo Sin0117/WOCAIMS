@@ -153,7 +153,7 @@ public class Household extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.Household.count());
 		result.put("size", rows);
-		renderJSON(result);
+		renderText(result);
 	}
 	/** 获取当前操作者的全部数据. */
 	private static List<models.Household> findAll(String keyword, int page, int rows) {
@@ -187,7 +187,7 @@ public class Household extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "户信息添加失败，请选择该人员所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		models.Household exist = isExist(code, department, null);
 		if (exist != null) {
@@ -212,7 +212,7 @@ public class Household extends Controller {
 			newData.department = models.Department.findById(department);
 			newData.save();
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 删除操作 */
@@ -224,7 +224,7 @@ public class Household extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 修改操作 */
@@ -234,7 +234,7 @@ public class Household extends Controller {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "户信息添加失败，请选择该人员所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		try {
 			models.Household cur = models.Household.findById(id);
@@ -263,7 +263,7 @@ public class Household extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	@Util

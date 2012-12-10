@@ -54,7 +54,7 @@ public class Flup extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.Flup.count());
 		result.put("size", rows);
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 获取当前操作者的全部数据. */
@@ -90,7 +90,7 @@ public class Flup extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "随访记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		models.Flup newData = new models.Flup();
 		Date newDate = new Date();
@@ -104,7 +104,7 @@ public class Flup extends Controller {
 		newData.modifyAt = newDate;
 		newData.department = models.Department.findById(department);
 		newData.save();
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 删除操作 */
@@ -116,7 +116,7 @@ public class Flup extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 修改操作 */
@@ -125,7 +125,7 @@ public class Flup extends Controller {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "随访记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		try {
 			models.Flup cur = models.Flup.findById(id);
@@ -143,6 +143,6 @@ public class Flup extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 }

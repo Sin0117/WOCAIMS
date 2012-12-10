@@ -43,7 +43,7 @@ public class Administrator extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.Administrator.count());
 		result.put("size", rows);
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 添加操作 */
@@ -51,7 +51,7 @@ public class Administrator extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "人员添加失败，请选择该人员所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		models.Administrator existAdmin = isExist(login, department, null);
 		if (existAdmin != null) {
@@ -66,7 +66,7 @@ public class Administrator extends Controller {
 			newAmin.department = models.Department.findById(department);
 			newAmin.save();
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 删除操作 */
@@ -78,7 +78,7 @@ public class Administrator extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 修改操作 */
@@ -86,7 +86,7 @@ public class Administrator extends Controller {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "人员添加失败，请选择该人员所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		try {
 			models.Administrator cur = models.Administrator.findById(id);
@@ -101,7 +101,7 @@ public class Administrator extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 修改密码. */

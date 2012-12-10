@@ -54,7 +54,7 @@ public class HealthArchives extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.HealthArchives.count());
 		result.put("size", rows);
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 获取当前操作者的全部数据. */
@@ -91,7 +91,7 @@ public class HealthArchives extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		
 		models.HealthArchives existHealth = isExist(code, department, null);
@@ -137,7 +137,7 @@ public class HealthArchives extends Controller {
 						List<String> infoArr = Utils.toStringArray(contentAt[1], "#T#");
 						for (int j = 0; j < infoArr.size(); j ++) {
 							models.PhysicalInfo newInfo = new models.PhysicalInfo();
-							newInfo.content = infoArr.get(i);
+							newInfo.content = infoArr.get(j);
 							newInfo.physical = newPhy;
 							newInfo.createAt = newDate;
 							newInfo.modifyAt = newDate;
@@ -199,7 +199,7 @@ public class HealthArchives extends Controller {
 				newData.save();
 			}
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 删除操作 */
@@ -211,7 +211,7 @@ public class HealthArchives extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	
 	/** 修改操作 */
@@ -221,7 +221,7 @@ public class HealthArchives extends Controller {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderJSON(result);
+			renderText(result);
 		}
 		try {
 			models.HealthArchives cur = models.HealthArchives.findById(id);
@@ -272,7 +272,7 @@ public class HealthArchives extends Controller {
 						List<String> infoArr = Utils.toStringArray(contentAt[1], "#T#");
 						for (int j = 0; j < infoArr.size(); j ++) {
 							models.PhysicalInfo newInfo = new models.PhysicalInfo();
-							newInfo.content = infoArr.get(i);
+							newInfo.content = infoArr.get(j);
 							newInfo.physical = newPhy;
 							newInfo.createAt = modifyDate;
 							newInfo.modifyAt = modifyDate;
@@ -354,7 +354,7 @@ public class HealthArchives extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderJSON(result);
+		renderText(result);
 	}
 	@Util
 	public static models.HealthArchives isExist(final String code, final String department, final String id) {
