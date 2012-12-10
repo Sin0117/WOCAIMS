@@ -41,7 +41,7 @@ public class Department extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.Department.count());
 		result.put("size", rows);
-		renderText(result);
+		renderJSON(result);
 	}
 	
 	/** 添加操作 */

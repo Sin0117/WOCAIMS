@@ -43,7 +43,7 @@ public class Administrator extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.Administrator.count());
 		result.put("size", rows);
-		renderText(result);
+		renderJSON(result);
 	}
 	
 	/** 添加操作 */

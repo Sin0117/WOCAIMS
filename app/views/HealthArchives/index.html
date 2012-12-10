@@ -29,7 +29,7 @@
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这条健康档案吗？', '@{HealthArchives.del}')">删除记录</a>
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetailHealth()">查看记录详情</a>
 	    #{/if}
-	    <a href="@{HealthArchives.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true">导出Excel</a>  
+	    <a href="@{HealthArchives.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="return doReport(this);">导出Excel</a>
 	</div>
 	
 	<div id="detail" class="easyui-dialog" style="width: 480px; height: 320px; padding: 10px 20px;" closed="true">
@@ -489,6 +489,21 @@
 	function removePhysicalInfo(li) {
 		$(li).remove();
 	}
+	/** 导出报表. */
+	function doReport(elem) {
+    	var row = $('#dg').datagrid('getSelected');  
+        if (row) {
+        	elem = $(elem);
+        	var url = elem.attr("href");
+        	if (url.indexOf('?') != -1) {
+        		url += '&id=' + row.id;
+        	} else {
+        		url += '?id=' + row.id;
+        	}
+        	location.href = url
+        }
+        return false;
+    }
 </script>
 <style>
 	#physicalList { list-style: none; }

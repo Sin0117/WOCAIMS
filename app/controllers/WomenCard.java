@@ -302,7 +302,7 @@ public class WomenCard extends Controller {
 		result.put("rows", datas);
 		result.put("total", models.WomenCard.count());
 		result.put("size", rows);
-		renderText(result);
+		renderJSON(result);
 	}
 	
 	/** 获取当前操作者的全部数据. */

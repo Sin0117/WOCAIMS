@@ -6,7 +6,7 @@
 <html>
     <head>
         <title>育龄妇女信息化管理系统</title>
-        <meta charset="${_response_encoding}">
+        <meta charset="utf-8">
         <link rel="stylesheet" media="screen" href="@{'/public/javascripts/jquery-easyui-1.3.1/themes/default/easyui.css'}">
         <link rel="stylesheet" media="screen" href="@{'/public/javascripts/jquery-easyui-1.3.1/themes/icon.css'}">
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
@@ -58,7 +58,7 @@
 	            onSubmit: function(){  
 	                return $(this).form('validate');  
 	            },  
-	            success: function(result){  
+	            success: function(result) {
 	                var result = eval('('+result+')');  
 	                if (result.error){  
 	                    $.messager.show({  
