@@ -22,8 +22,99 @@ public class RentalHouse extends Controller {
 	
 	/** 导出excel. */
 	public static void report(String keyword, String department) {
+		int rows = 100000;
+		int page = 1;
+		List<models.RentalHouse> lists = null;
+		if (department == null || "".equals(department)) {
+			lists = findAll(keyword, page, rows);
+		} else {
+			models.Department dep = models.Department.findById(department);
+			if (dep != null) {
+				MorphiaQuery query = models.RentalHouse.find();
+				if (keyword != null && !"".equals(keyword))
+					query.or(query.criteria("name").equal(keyword), 
+							query.criteria("user").equal(keyword));
+				query.filter("department", dep);
+				lists = query.limit(rows).offset(page * rows - rows).asList();
+			} else {
+				lists = findAll(keyword, page, rows);
+			}
+		}
+
 		String fileName = "出租房屋登记-" + Secure.getAdmin().department.name + ".xls";
-		renderBinary(Utils.toExcel(fileName), fileName);
+		File f = new File("./excels/" + fileName);
+		try {
+			if (f.exists())
+				f.createNewFile();
+			WritableWorkbook wbook = Workbook.createWorkbook(f);
+			WritableSheet ws = wbook.createSheet("出租房屋登记", 0);
+			
+			WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			int index = 0;
+			Label label0_0 = new Label(0, index, "出租房屋登记",wcfFC);
+			ws.addCell(label0_0);
+			ws.mergeCells(0, index, 9, 0); 
+			index++;
+			Label label0_1 = new Label(0, index, "单位");
+			ws.addCell(label0_1);
+			Label label1_1 = new Label(1, index,
+					Secure.getAdmin().department.name);
+			ws.addCell(label1_1);
+			index++;
+			Label label0_2 = new Label(0, index, "单位");
+			ws.addCell(label0_2);
+			Label label1_2 = new Label(1, index, "职工姓名");
+			ws.addCell(label1_2);
+			Label label2_2 = new Label(2, index, "出租房屋住址");
+			ws.addCell(label2_2);
+			Label label3_2 = new Label(3, index, "租房人姓名");
+			ws.addCell(label3_2);
+			Label label4_2 = new Label(4, index, "家庭人口");
+			ws.addCell(label4_2);
+			Label label5_2 = new Label(5, index, "孩  次");
+			ws.addCell(label5_2);
+			Label label6_2 = new Label(6, index, "婚育证明");
+			ws.addCell(label6_2);
+			Label label7_2 = new Label(7, index, "户籍地");
+			ws.addCell(label7_2);
+			Label label8_2 = new Label(8, index, "备注");
+			ws.addCell(label8_2);
+
+			if (lists != null) {
+				for (models.RentalHouse rentalHouse : lists) {
+					index++;
+					Label label0_2_r = new Label(0, index, rentalHouse.department.name);
+					ws.addCell(label0_2_r);
+					Label label1_2_r = new Label(1, index, rentalHouse.name);
+					ws.addCell(label1_2_r);
+					Label label2_2_r = new Label(2, index, rentalHouse.address);
+					ws.addCell(label2_2_r);
+					Label label3_2_r = new Label(3, index, rentalHouse.user);
+					ws.addCell(label3_2_r);
+					jxl.write.Number label4_2_r = new jxl.write.Number(4,
+							index, rentalHouse.size);
+					ws.addCell(label4_2_r);
+					jxl.write.Number label5_2_r = new jxl.write.Number(5,
+							index, rentalHouse.childrenSize);
+					ws.addCell(label5_2_r);
+					Label label6_2_r = new Label(6, index, rentalHouse.childbirth);
+					ws.addCell(label6_2_r);
+					Label label7_2_r = new Label(7, index, rentalHouse.register);
+					ws.addCell(label7_2_r);
+					Label label8_2_r = new Label(8, index, rentalHouse.notes);
+					ws.addCell(label8_2_r);
+				}
+			}
+
+			wbook.write();
+			wbook.close();
+			renderBinary(f, fileName);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			error(exception);
+		}
 	}
 	
 	/** 获取数据列表. */

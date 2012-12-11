@@ -22,9 +22,88 @@ public class Flup extends Controller {
 	}
 	
 	/** 导出excel. */
-	public static void report(String keyword, String department) {
-		String fileName = "随访记录-" + Secure.getAdmin().department.name + ".xls";
-		renderBinary(Utils.toExcel(fileName), fileName);
+	public static void report(String keyword,Date date, String department) {
+		int rows = 100000;
+		int page = 1;
+		List<models.Flup> lists = null;
+		if (department == null || "".equals(department)) {
+			lists = findAll(keyword, date, page, rows);
+		} else {
+			models.Department dep = models.Department.findById(department);
+			if (dep != null) {
+				MorphiaQuery query = models.Flup.find();
+				if (keyword != null && !"".equals(keyword))
+					query.filter("name", keyword);
+				if (date != null)
+					query.filter("date", date);
+				query.filter("department", dep);
+				lists = query.limit(rows).offset(page * rows - rows).asList();
+			} else {
+				lists = findAll(keyword, date, page, rows);
+			}
+		}
+
+		String fileName = "人口和计划生育工作随访服务记录-" + Secure.getAdmin().department.name + ".xls";	
+		File f = new File("./excels/" + fileName);
+		try {
+			if (f.exists())
+				f.createNewFile();
+			WritableWorkbook wbook = Workbook.createWorkbook(f);
+			WritableSheet ws = wbook.createSheet("人口和计划生育工作随访服务记录", 0);
+			
+			WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			int index = 0;
+			Label label0_0 = new Label(0, index, "人口和计划生育工作随访服务记录",wcfFC);
+			ws.addCell(label0_0);
+			ws.mergeCells(0, index, 5, 0); 
+			index++;
+			Label label0_1 = new Label(0, index, "单位");
+			ws.addCell(label0_1);
+			Label label1_1 = new Label(1, index,
+					Secure.getAdmin().department.name);
+			ws.addCell(label1_1);
+			index++;
+			Label label0_2 = new Label(0, index, "随访职工姓名");
+			ws.addCell(label0_2);
+			Label label1_2 = new Label(1, index, "随访事由");
+			ws.addCell(label1_2);
+			Label label2_2 = new Label(2, index, "随访内容");
+			ws.addCell(label2_2);
+			Label label3_2 = new Label(3, index, "随访日期");
+			ws.addCell(label3_2);
+			Label label4_2 = new Label(4, index, "随访人员");
+			ws.addCell(label4_2);
+			Label label5_2 = new Label(5, index, "备注");
+			ws.addCell(label5_2);
+
+			if (lists != null) {
+				for (models.Flup flup : lists) {
+					index++;
+					Label label0_2_r = new Label(0, index, flup.name);
+					ws.addCell(label0_2_r);
+					Label label1_2_r = new Label(1, index, flup.reason);
+					ws.addCell(label1_2_r);
+					Label label2_2_r = new Label(2, index, flup.content);
+					ws.addCell(label2_2_r);
+					Label label3_2_r = new Label(3, index, utils.Utils
+							.formatDate(flup.date));
+					ws.addCell(label3_2_r);
+					Label label4_2_r = new Label(4, index, flup.staff);
+					ws.addCell(label4_2_r);
+					Label label5_2_r = new Label(5, index, flup.notes);
+					ws.addCell(label5_2_r);
+				}
+			}
+
+			wbook.write();
+			wbook.close();
+			renderBinary(f, fileName);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			error(exception);
+		}
 	}
 	
 	/** 获取数据列表. */

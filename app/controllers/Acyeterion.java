@@ -22,9 +22,79 @@ public class Acyeterion extends Controller {
 	}
 	
 	/** 导出excel. */
-	public static void report(String keyword, String department) {
+	public static void report(String keyword,Date date, String department) {
+		int rows = 100000;
+		int page = 1;
+		List<models.Acyeterion> lists = null;
+		if (department == null || "".equals(department)) {
+			lists = findAll(keyword, date, page, rows);
+		} else {
+			models.Department dep = models.Department.findById(department);
+			if (dep != null) {
+				MorphiaQuery query = models.Acyeterion.find();
+				if (keyword != null && !"".equals(keyword))
+					query.or(query.criteria("man").contains(keyword), query.criteria("woman").contains(keyword));
+				query.filter("department", dep);
+				lists = query.limit(rows).offset(page * rows - rows).asList();
+			} else {
+				lists = findAll(keyword, date, page, rows);
+			}
+		}
+
 		String fileName = "避孕药品发放登记-" + Secure.getAdmin().department.name + ".xls";
-		renderBinary(Utils.toExcel(fileName), fileName);
+		File f = new File("./excels/" + fileName);
+		try {
+			if (f.exists())
+				f.createNewFile();
+			WritableWorkbook wbook = Workbook.createWorkbook(f);
+			WritableSheet ws = wbook.createSheet("避孕药品发放登记花名册", 0);
+			
+			WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			int index = 0;
+			Label label0_0 = new Label(0, index, "避孕药品发放登记花名册",wcfFC);
+			ws.addCell(label0_0);
+			ws.mergeCells(0, index, 3, 0); 
+			index++;
+			Label label0_1 = new Label(0, index, "单位");
+			ws.addCell(label0_1);
+			Label label1_1 = new Label(1, index,
+					Secure.getAdmin().department.name);
+			ws.addCell(label1_1);
+			index++;
+			Label label0_2 = new Label(0, index, "单位");
+			ws.addCell(label0_2);
+			Label label1_2 = new Label(1, index, "领取日期");
+			ws.addCell(label1_2);
+			Label label2_2 = new Label(2, index, "数量");
+			ws.addCell(label2_2);
+			Label label3_2 = new Label(3, index, "领取人");
+			ws.addCell(label3_2);
+
+			if (lists != null) {
+				for (models.Acyeterion acyeterion : lists) {
+					index++;
+					Label label0_2_r = new Label(0, index, acyeterion.department.name);
+					ws.addCell(label0_2_r);
+					Label label1_2_r = new Label(1, index, utils.Utils
+							.formatDate(acyeterion.date));
+					ws.addCell(label1_2_r);
+					jxl.write.Number label2_2_r = new jxl.write.Number(2,
+							index, acyeterion.size);
+					ws.addCell(label2_2_r);
+					Label label3_2_r = new Label(3, index, acyeterion.user);
+					ws.addCell(label3_2_r);
+				}
+			}
+
+			wbook.write();
+			wbook.close();
+			renderBinary(f, fileName);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			error(exception);
+		}
 	}
 	
 	/** 获取数据列表. */

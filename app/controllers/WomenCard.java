@@ -268,10 +268,8 @@ public class WomenCard extends Controller {
 	        wbook.write();
 	        wbook.close();
 	        renderBinary(f, fileName);
-	    } catch (Exception exception) {  
-	        // TODO Auto-generated catch block  
+	    } catch (Exception exception) {
 	    	exception.printStackTrace();
-	    	
 	        error(exception);
 	    }
 	}

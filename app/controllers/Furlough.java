@@ -22,8 +22,80 @@ public class Furlough extends Controller {
 	
 	/** 导出excel. */
 	public static void report(String keyword, String department) {
+		int rows = 100000;
+		int page = 1;
+		List<models.Furlough> lists = null;
+		if (department == null || "".equals(department)) {
+			lists = findAll(keyword, page, rows);
+		} else {
+			models.Department dep = models.Department.findById(department);
+			if (dep != null) {
+				MorphiaQuery query = models.Furlough.find();
+				if (keyword != null && !"".equals(keyword))
+					query.filter("name", keyword);
+				query.filter("department", dep);
+				lists = query.limit(rows).offset(page * rows - rows).asList();
+			} else {
+				lists = findAll(keyword, page, rows);
+			}
+		}
+
 		String fileName = "休长假职工登记-" + Secure.getAdmin().department.name + ".xls";
-		renderBinary(Utils.toExcel(fileName), fileName);
+		File f = new File("./excels/" + fileName);
+		try {
+			if (f.exists())
+				f.createNewFile();
+			WritableWorkbook wbook = Workbook.createWorkbook(f);
+			WritableSheet ws = wbook.createSheet("休长假职工登记", 0);
+			
+			WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			int index = 0;
+			Label label0_0 = new Label(0, index, "休长假职工登记",wcfFC);
+			ws.addCell(label0_0);
+			ws.mergeCells(0, index, 12, 0); 
+			index++;
+			Label label0_1 = new Label(0, index, "单位");
+			ws.addCell(label0_1);
+			Label label1_1 = new Label(1, index,
+					Secure.getAdmin().department.name);
+			ws.addCell(label1_1);
+			index++;
+			Label label0_2 = new Label(0, index, "单位");
+			ws.addCell(label0_2);
+			Label label1_2 = new Label(1, index, "姓名");
+			ws.addCell(label1_2);
+			Label label2_2 = new Label(2, index, "性别");
+			ws.addCell(label2_2);
+			Label label3_2 = new Label(3, index, "民族");
+			ws.addCell(label3_2);
+			Label label4_2 = new Label(4, index, "出生年月");
+			ws.addCell(label4_2);
+			Label label5_2 = new Label(5, index, "爱人姓名");
+			ws.addCell(label5_2);
+			Label label6_2 = new Label(6, index, "民族");
+			ws.addCell(label6_2);
+			Label label7_2 = new Label(7, index, "出生年月");
+			ws.addCell(label7_2);
+			Label label8_2 = new Label(8, index, "工作单位");
+			ws.addCell(label8_2);
+			Label label9_2 = new Label(9, index, "节育措施");
+			ws.addCell(label9_2);
+			Label label10_2 = new Label(10, index, "现住址");
+			ws.addCell(label10_2);
+			Label label11_2 = new Label(11, index, "联系电话");
+			ws.addCell(label11_2);
+			Label label12_2 = new Label(12, index, "备注");
+			ws.addCell(label12_2);
+
+			wbook.write();
+			wbook.close();
+			renderBinary(f, fileName);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			error(exception);
+		}
 	}
 	
 	/** 获取数据列表. */

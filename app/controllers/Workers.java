@@ -27,8 +27,57 @@ public class Workers extends Controller {
 	
 	/** 导出excel. */
 	public static void report(String keyword, String department) {
+		int rows = 100000;
+		int page = 1;
+		List<models.Workers> lists = null;
+		if (department == null || "".equals(department)) {
+			lists = findAll(keyword, page, rows);
+		} else {
+			models.Department dep = models.Department.findById(department);
+			if (dep != null) {
+				MorphiaQuery query = models.Workers.find();
+				if (keyword != null && !"".equals(keyword))
+					query.filter("name", keyword);
+				query.filter("department", dep);
+				lists = query.limit(rows).offset(page * rows - rows).asList();
+			} else {
+				lists = findAll(keyword, page, rows);
+			}
+		}
+
 		String fileName = "男职工登记-" + Secure.getAdmin().department.name + ".xls";
-		renderBinary(Utils.toExcel(fileName), fileName);
+		File f = new File("./excels/" + fileName);
+		try {
+			if (f.exists())
+				f.createNewFile();
+			WritableWorkbook wbook = Workbook.createWorkbook(f);
+			WritableSheet ws = wbook.createSheet("男职工登记花名册", 0);
+			
+			WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			int index = 0;
+			Label label0_0 = new Label(0, index, "男职工登记花名册",wcfFC);
+			ws.addCell(label0_0);
+			ws.mergeCells(0, index, 17, 0); 
+			index++;
+			Label label0_1 = new Label(0, index, "单位");
+			ws.addCell(label0_1);
+			Label label1_1 = new Label(1, index,
+					Secure.getAdmin().department.name);
+			ws.addCell(label1_1);
+			index++;
+			Label label0_2 = new Label(0, index, "户主");
+			ws.addCell(label0_2);
+			ws.mergeCells(0, index, 2, 0); 
+
+			wbook.write();
+			wbook.close();
+			renderBinary(f, fileName);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			error(exception);
+		}
 	}
 	
 	/** 获取数据列表. */

@@ -16,6 +16,7 @@ public class Secure extends Controller {
 	/**
 	 * 检查要调用的Action方法是否可访问.
 	 */
+	/*
 	@Before(unless = { "login", "logout", "loginWithXHR", "authenticate" })
 	public static void checkAccess() {
 		String adminId = session.get("admin");
@@ -24,10 +25,12 @@ public class Secure extends Controller {
 			render("/Application/login.html", error);
 		}
 	}
+	*/
 	
 	/**
 	 * 如果已登陆则跳转回原先路径，如果未登陆，跳转到登陆页面.
 	 */
+	/*
 	public static boolean authenticate() {
 		try {
 			// 验证成功，跳转回到请求页面
@@ -38,6 +41,7 @@ public class Secure extends Controller {
 		}
 		return false;
 	}
+	*/
 	
 	public static void login(final String name, final String password) {
 		models.Administrator admin = getAdmin(name, password);
