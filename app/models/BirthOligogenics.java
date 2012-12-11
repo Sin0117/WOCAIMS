@@ -16,6 +16,8 @@ public class BirthOligogenics extends Model {
 	public Department department;
 	// 流动性质
 	public String flow;
+	// 禁忌
+	public String taboo;
 	// 出生情况
 	@Reference(ignoreMissing = false)
 	public BirthStatus birthStatus;
@@ -36,6 +38,7 @@ public class BirthOligogenics extends Model {
 		Map<String, Object> oligogenics = this.oligogenics != null ? this.oligogenics.serialize() : null;
 		
 		result.put("flow", this.flow);
+		result.put("taboo", this.taboo);
 		result.put("birthStatus", birthStatus);
 		if (birthStatus != null) {
 			for (String key : birthStatus.keySet()) {

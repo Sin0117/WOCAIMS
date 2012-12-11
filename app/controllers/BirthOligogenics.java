@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.util.JSON;
+
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
 import utils.Utils;
@@ -83,12 +85,12 @@ public class BirthOligogenics extends Controller {
 	
 	/** 添加操作 */
 	public static void add(String flow, String man, String woman, String nation, String birth, int size,
-			String gender, Boolean plan, Boolean survival, String code, String measure,
+			String gender, Boolean plan, Boolean survival, String code, String measure, String taboo,
 			String measureDate, String measureLocal, String notes, String department) {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		Date newDate = new Date();
 		models.Department dep = models.Department.findById(department);
@@ -125,6 +127,7 @@ public class BirthOligogenics extends Controller {
 		
 		models.BirthOligogenics newData = new models.BirthOligogenics();
 		newData.flow = flow;
+		newData.taboo = taboo;
 		newData.birthStatus = newBirth;
 		newData.oligogenics = newOlig;
 		newData.createAt = newDate;
@@ -132,7 +135,7 @@ public class BirthOligogenics extends Controller {
 		newData.department = dep;
 		newData.notes = notes;
 		newData.save();
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 删除操作 */
@@ -144,18 +147,18 @@ public class BirthOligogenics extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 修改操作 */
 	public static void update(String id, String flow, String man, String woman, String nation, 
-			String birth, int size,
+			String birth, int size, String taboo,
 			String gender, Boolean plan, Boolean survival, String code, String measure,
 			String measureDate, String measureLocal, String notes, String department) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		try {
 			models.Department dep = models.Department.findById(department);
@@ -191,6 +194,7 @@ public class BirthOligogenics extends Controller {
 			newOlig.save();
 			
 			cur.flow = flow;
+			cur.taboo = taboo;
 			cur.birthStatus = newBirth;
 			cur.oligogenics = newOlig;
 			cur.modifyAt = newDate;
@@ -202,6 +206,6 @@ public class BirthOligogenics extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 }

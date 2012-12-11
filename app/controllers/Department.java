@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.mongodb.util.JSON;
+
 import models.enums.DepartmentLevel;
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
@@ -50,7 +52,7 @@ public class Department extends Controller {
 		models.Department existDep = isExist(name, code, null);
 		if (parent == null || "".equals(parent)) {
 			result.put("error", "部门添加失败，请选择该部门所属部门。");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		if (existDep != null) {
 			result.put("error", "部门添加失败，" + existDep.name + "(" + existDep.code + ")部门已经存在！");
@@ -67,7 +69,7 @@ public class Department extends Controller {
 			}
 			newDep.save();
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 删除操作 */
@@ -81,7 +83,7 @@ public class Department extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 修改操作 */
@@ -89,7 +91,7 @@ public class Department extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (parent == null || "".equals(parent)) {
 			result.put("error", "部门添加失败，请选择该部门所属部门。");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		try {
 			models.Department cur = models.Department.findById(id);
@@ -112,7 +114,7 @@ public class Department extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	@Util

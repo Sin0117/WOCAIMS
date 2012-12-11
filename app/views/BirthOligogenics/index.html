@@ -9,15 +9,20 @@
 	        url="@{BirthOligogenics.list(keyword, department)}" toolbar="#toolbar" pagination="true"  
 	        rownumbers="true" fitColumns="true" singleSelect="true">
 	    <thead>
+	    	<tr>
+	    		<th colspan="5">夫妻情况</th>
+	    		<th colspan="3">婴儿情况</th>
+	    		<th>其他</th>
+	    	</tr>
 	        <tr>
 	            <th field="man" width="64">男方姓名</th>
 	            <th field="woman" width="64">女方姓名</th>  
 	            <th field="departmentName" width="72">单位</th>
+	            <th field="measure" width="64">节育措施</th>
+	            <th field="measureLocal" width="64">手术地点</th>
 	            <th field="size" width="32">孩次</th>
 	            <th field="code" width="72">准生证号</th>
 	            <th field="survivalTxt" width="64">是否存活</th>
-	            <th field="measure" width="64">节育措施</th>
-	            <th field="measureLocal" width="64">手术地点</th>
 	            <th field="notes" width="72">备注</th>
 	        </tr>  
 	    </thead>  
@@ -35,6 +40,7 @@
 	
 	<div id="detail" class="easyui-dialog" style="width: 480px; height: 320px; padding: 10px 20px;" closed="true">
 		<div class="ftitle">出生及节育措施记录</div>
+		<h2>夫妻情况</h2>
 		<div class="fitem">  
             <label>女方姓名:</label>  
             <span id="detail_woman" />  
@@ -43,6 +49,28 @@
             <label>男方姓名:</label>  
             <span id="detail_man" />  
         </div>
+        <div class="fitem">  
+            <label>节育措施:</label>  
+            <span id="detail_measure" />  
+        </div>
+        <div class="fitem">  
+            <label>手术时间:</label>  
+            <span id="detail_measureDate" />  
+        </div>
+        <div class="fitem">  
+            <label>手术地点:</label>  
+            <span id="detail_measureLocal" />  
+        </div>
+        <div class="fitem">  
+            <label>流动性质:</label>  
+            <span id="detail_flow" />  
+        </div>
+        <div class="fitem">  
+            <label>禁忌症:</label>  
+            <span id="detail_taboo" />  
+        </div>
+        
+        <h2>婴儿情况</h2>
         <div class="fitem">  
             <label>孩次:</label>  
             <span id="detail_size" />  
@@ -72,18 +100,6 @@
             <span id="detail_planTxt" />  
         </div>
         <div class="fitem">  
-            <label>节育措施:</label>  
-            <span id="detail_measure" />  
-        </div>
-        <div class="fitem">  
-            <label>手术时间:</label>  
-            <span id="detail_measureDate" />  
-        </div>
-        <div class="fitem">  
-            <label>手术地点:</label>  
-            <span id="detail_measureLocal" />  
-        </div>
-        <div class="fitem">  
             <label>记录添加时间:</label>  
             <span id="detail_createAt" />  
         </div>
@@ -104,6 +120,7 @@
 	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
 	    <div class="ftitle">出生及节育措施登记</div>  
 	    <form id="fm" method="post" novalidate>
+	    	<h2>夫妻情况</h2>
 	        <div class="fitem">  
 	            <label>男方姓名:</label>  
 	            <input name="man" class="easyui-validatebox" required="true">  
@@ -112,6 +129,28 @@
 	            <label>女方姓名:</label>  
 	            <input name="woman" class="easyui-validatebox" required="true">  
 	        </div>
+	        <div class="fitem">  
+	            <label>节育措施:</label>  
+	            <input name="measure" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>手术时间:</label>  
+	            <input name="measureDate" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>手术地点:</label>  
+	            <input name="measureLocal" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>流动性质:</label>  
+	            <input name="flow" class="easyui-validatebox"/>  
+	        </div>
+	        <div class="fitem">  
+	            <label>禁忌症:</label>  
+	            <input name="taboo" class="easyui-validatebox"/>  
+	        </div>
+	        
+	        <h2>婴儿情况</h2>
 	        <div class="fitem">  
 	            <label>孩次:</label>  
 	            <input name="size" class="easyui-validatebox">  
@@ -142,18 +181,6 @@
 	            <label>计划内外:</label>
 	            <label class="rd"><input name="plan" type="radio" value="true" class="easyui-validatebox">计划内</label>
 	            <label class="rd"><input name="plan" type="radio" value="false" class="easyui-validatebox">计划外</label> 
-	        </div>
-	        <div class="fitem">  
-	            <label>节育措施:</label>  
-	            <input name="measure" class="easyui-validatebox">  
-	        </div>
-	        <div class="fitem">  
-	            <label>手术时间:</label>  
-	            <input name="measureDate" class="easyui-datebox">  
-	        </div>
-	        <div class="fitem">  
-	            <label>手术地点:</label>  
-	            <input name="measureLocal" class="easyui-validatebox">  
 	        </div>
 	        <div class="fitem">  
 	            <label>备注:</label>

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.util.JSON;
+
 import jxl.Workbook;
 import jxl.write.DateTime;
 import jxl.write.Label;
@@ -187,7 +189,7 @@ public class Household extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "户信息添加失败，请选择该人员所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		models.Household exist = isExist(code, department, null);
 		if (exist != null) {
@@ -212,7 +214,7 @@ public class Household extends Controller {
 			newData.department = models.Department.findById(department);
 			newData.save();
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 删除操作 */
@@ -224,7 +226,7 @@ public class Household extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 修改操作 */
@@ -234,7 +236,7 @@ public class Household extends Controller {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "户信息添加失败，请选择该人员所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		try {
 			models.Household cur = models.Household.findById(id);
@@ -263,7 +265,7 @@ public class Household extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	@Util

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.util.JSON;
+
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
 import utils.Utils;
@@ -85,7 +87,7 @@ public class Oligogenics extends Controller {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		models.Oligogenics newData = new models.Oligogenics();
 		Date newDate = new Date();
@@ -101,7 +103,7 @@ public class Oligogenics extends Controller {
 		newData.modifyAt = newDate;
 		newData.department = models.Department.findById(department);
 		newData.save();
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 删除操作 */
@@ -113,7 +115,7 @@ public class Oligogenics extends Controller {
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 	
 	/** 修改操作 */
@@ -122,7 +124,7 @@ public class Oligogenics extends Controller {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(result);
+			renderText(JSON.serialize(result));
 		}
 		try {
 			models.Oligogenics cur = models.Oligogenics.findById(id);
@@ -142,6 +144,6 @@ public class Oligogenics extends Controller {
 			exc.printStackTrace();
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
 		}
-		renderText(result);
+		renderText(JSON.serialize(result));
 	}
 }
