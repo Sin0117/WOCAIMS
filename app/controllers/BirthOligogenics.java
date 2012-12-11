@@ -1,10 +1,16 @@
 package controllers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 import com.mongodb.util.JSON;
 
@@ -22,8 +28,111 @@ public class BirthOligogenics extends Controller {
 	
 	/** 导出excel. */
 	public static void report(String keyword, String department) {
-		String fileName = "出生及节育措施-" + Secure.getAdmin().department.name + ".xls";
-		renderBinary(Utils.toExcel(fileName), fileName);
+		String fileName = "出生及节育措施花名册-";
+		List<models.BirthOligogenics> lists = null;
+		if (Utils.checkString(department)) {
+			models.Department dep = models.Department.findById(department);
+			fileName += dep.name + ".xls";
+			MorphiaQuery query = models.BirthOligogenics.find();
+			if (keyword != null && !"".equals(keyword))
+				query.or(query.criteria("birthStatus.man").contains(keyword), query.criteria("birthStatus.woman").contains(keyword),
+						query.criteria("oligogenics.man").contains(keyword), query.criteria("oligogenics.woman").contains(keyword));
+			query.filter("department", dep);
+			lists = query.asList();
+		} else {
+			fileName += Secure.getAdmin().department.name + ".xls";
+			lists = findAll(keyword, 0, 0);
+		}
+		File f = new File("./excels/" + fileName);
+	    try {
+	    	if (f.exists())
+	    		f.createNewFile();
+	        WritableWorkbook wbook = Workbook.createWorkbook(f);
+	        /*
+	        WritableSheet ws = wbook.createSheet("户基本信息卡", 0);
+	        Label label0_0 = new Label(0, 0, "单位");
+	        ws.addCell(label0_0);
+	        Label field0_0 = new Label(1, 0, data.department.name);
+	        ws.addCell(field0_0);
+	        
+	        Label label0_1 = new Label(2, 0, "单位编码");
+	        ws.addCell(label0_1);
+	        Label field0_1 = new Label(3, 0, data.department.code);
+	        ws.addCell(field0_1);
+	        
+	        Label label1_0 = new Label(0, 1, "地区属性");
+	        ws.addCell(label1_0);
+	        Label field1_0 = new Label(1, 1, data.live);
+	        ws.addCell(field1_0);
+	        
+	        Label label1_1 = new Label(2, 1, "建卡日期");
+	        ws.addCell(label1_1);
+	        Label field1_1 = new Label(3, 1, utils.Utils.formatDate(data.createAt));
+	        ws.addCell(field1_1);
+	        
+	        Label label2_0 = new Label(0, 2, "户编码");
+	        ws.addCell(label2_0);
+	        Label field2_0 = new Label(1, 2, data.code);
+	        ws.addCell(field2_0);
+	        
+	        Label label2_1 = new Label(2, 2, "户主姓名");
+	        ws.addCell(label2_1);
+	        Label field2_1 = new Label(3, 2, data.user);
+	        ws.addCell(field2_1);
+	        
+	        Label label3_0 = new Label(0, 3, "户籍地址");
+	        ws.addCell(label3_0);
+	        Label field3_0 = new Label(1, 3, data.register);
+	        ws.addCell(field3_0);
+	        
+	        Label label3_1 = new Label(2, 3, "本户人数");
+	        ws.addCell(label3_1);
+	        jxl.write.Number field3_1 = new jxl.write.Number(3, 3, data.peoples);
+	        ws.addCell(field3_1);
+	        
+	        Label label4_0 = new Label(0, 4, "本户育龄妇女人数");
+	        ws.addCell(label4_0);
+	        jxl.write.Number field4_0 = new jxl.write.Number(1, 4, data.pregnant);
+	        ws.addCell(field4_0);
+	        
+	        Label label4_1 = new Label(2, 4, "本户少数民族人数");
+	        ws.addCell(label4_1);
+	        jxl.write.Number field4_1 = new jxl.write.Number(3, 4, data.minority);
+	        ws.addCell(field4_1);
+	        
+	        Label label5_0 = new Label(0, 5, "流入人数");
+	        ws.addCell(label5_0);
+	        jxl.write.Number field5_0 = new jxl.write.Number(1, 5, data.into);
+	        ws.addCell(field5_0);
+	        
+	        Label label5_1 = new Label(2, 5, "少数民族流入人数");
+	        ws.addCell(label5_1);
+	        jxl.write.Number field5_1 = new jxl.write.Number(3, 5, data.minorityInto);
+	        ws.addCell(field5_1);
+	        
+	        Label label6_0 = new Label(0, 6, "流出人数");
+	        ws.addCell(label6_0);
+	        jxl.write.Number field6_0 = new jxl.write.Number(1, 6, data.out);
+	        ws.addCell(field6_0);
+	        
+	        Label label6_1 = new Label(2, 6, "少数民族流出人数");
+	        ws.addCell(label6_1);
+	        jxl.write.Number field6_1 = new jxl.write.Number(3, 6, data.minorityOut);
+	        ws.addCell(field6_1);
+	        
+	        Label label7_0 = new Label(0, 7, "记事栏");
+	        ws.addCell(label7_0);
+	        Label field7_0 = new Label(1, 7, data.notes);
+	        ws.addCell(field7_0);
+	        */
+	        wbook.write();
+	        wbook.close();
+	        renderBinary(f, fileName);
+	    } catch (Exception exception) {  
+	        // TODO Auto-generated catch block  
+	    	exception.printStackTrace();
+	    	error(exception);
+	    }
 	}
 	
 	/** 获取数据列表. */
@@ -68,16 +177,18 @@ public class BirthOligogenics extends Controller {
 				query.or(query.criteria("birthStatus.man").contains(keyword), query.criteria("birthStatus.woman").contains(keyword),
 						query.criteria("oligogenics.man").contains(keyword), query.criteria("oligogenics.woman").contains(keyword));
 			List<models.BirthOligogenics> data = query.asList();
-			if (size >= offset && size < end) {
-				for (models.BirthOligogenics flup : data) {
-					result.add(flup);
-					size ++;
+			if (rows > 0) {
+				if (size >= offset && size < end) {
+					for (models.BirthOligogenics flup : data) {
+						result.add(flup);
+						size ++;
+					}
+				} else {
+					size += data.size();
 				}
-			} else {
-				size += data.size();
-			}
-			if (size >= end) {
-				break;
+				if (size >= end) {
+					break;
+				}
 			}
 		}
 		return result;

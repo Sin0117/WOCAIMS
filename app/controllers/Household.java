@@ -124,7 +124,7 @@ public class Household extends Controller {
 	    } catch (Exception exception) {  
 	        // TODO Auto-generated catch block  
 	    	exception.printStackTrace();
-	        render("/errors/500.html", exception);
+	    	error(exception);
 	    }
 	}
 	
