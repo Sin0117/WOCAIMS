@@ -1,0 +1,67 @@
+@charset "utf-8";
+body{
+	margin:0px;
+	background-image:url(../images/login_user_bg.png);
+}
+#mian_box{
+	width:1000px;
+	margin:0 auto;
+	height:700px;
+	background-image:url(../images/login_user_bg_big.png);
+	background-repeat: no-repeat;
+}
+#logo_box{
+	
+	background-image:url(../images/login_logo.png);
+	background-repeat: no-repeat;
+	background-position: center 120px;
+	height:300px;	
+	}
+#logo_userintbox{
+	height:120px;
+	background-image: url(../images/login_user_bg_small.png);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#form_css{
+	width:780px;
+	margin:0 auto;
+	position:relative;
+	margin:0px 0px 30px auto;
+	*margin:0px 0px 30px auto;
+	_margin:0px 0px 0px auto;
+	top:30%;
+	}
+
+#form_css .input_box{
+	height:40px;
+	width:256px;
+	color:#738593;
+	font-size:14px;
+	text-indent: 1em;
+	line-height:42px;
+	border:none;
+	border-style:none;
+	background:url(../images/input_box.png);
+	background-repeat: no-repeat;
+	margin-right:10px;
+	*margin-right:10px;
+	float:left;
+}
+#form_css .btn_login{
+	width:102px;
+	height:42px;
+	background:url(../images/btn_login.png);
+	background-repeat:no-repeat;
+	border:none;
+	cursor:pointer;
+	float:left;
+}
+#copyright{
+	font-size:12px;
+	color:#729cc2;
+	text-align:center;
+	position:relative;
+	top:25%;
+}

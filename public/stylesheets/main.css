@@ -1,4 +1,6 @@
+/**
 * { padding: 0; margin: 0; font-size: 12px; color: #333; }
+**/
 a { text-decoration: none; }
 a:hover { text-decoration: underline; }
 /** 总界面面板 */
@@ -20,14 +22,14 @@ a:hover { text-decoration: underline; }
 #loginSpace .login-error { color: #F00; }
 #loginSpace button {  }
 
-#modifySpace h2 { text-align: center; font-size: 2em; border-bottom: 2px solid #ccc; margin: 12px 32px; padding-bottom: 12px; }
+#modifySpace h2 { text-align: center; font-size: 2em; border-bottom: 2px solid #ccc; margin: 12px auto; padding-bottom: 12px; }
 #modifySpace table { width: 400px; margin: 32px auto; }
 #modifySpace table td { line-height: 32px; }
 #modifySpace input { width: 220px; }
 #modifySpace .modify-error { color: #F00; }
 
 /** 内容显示区域 */
-#frameSpace { left: 170px; top: 48px; position: absolute; padding: 4px; }
+#frameSpace { left: 280px; top: 78px; position: absolute; padding: 4px; }
 /** 底部区域 */
 #footerSpace { left: 0px; position: absolute; width: 100%; height: 36px; text-align: center; line-height: 36px; border-top: 2px solid #777; }
 

@@ -1,0 +1,219 @@
+@charset "utf-8";
+body {
+	font-family:"宋体";
+	font-size:12px;
+	background-image: url(../images/top_bg_small.jpg);
+	background-repeat: repeat-x;
+	margin:0px;
+	color:#333333;
+}
+.h_space {
+	height:10px;
+	clear:both;
+}
+ul {
+	list-style-type: none;
+	padding:0px;
+	margin:0px;
+}
+.mian_box {
+	width:1024px;
+}
+.top_box {
+	height:63px;
+	background-image: url(../images/top_bg.jpg);
+	background-repeat: no-repeat;
+	min-width:1024px;
+	width:auto;
+	margin:0 0 0 auto;
+}
+.top_box .logo {
+	float:left;
+}
+.top_box .right_user_info {
+	float:right;
+	color:#ffffff;
+	line-height:60px;
+	padding-right:30px;
+}
+.top_box .right_user_info a:link {
+	text-decoration: none;
+	color:#ffffff;
+}
+.top_box .right_user_info a:hover {
+	text-decoration: underline;
+	color:#FF0;
+}
+.top_box .right_user_info a:visited {
+	text-decoration: underline;
+	color:#ffffff;
+}
+.left_side {
+	float:left;
+	width:248px;
+	height:auto;
+	min-height:640px;
+	_height:640px;
+	background-color:#f4f9fd;
+	border:#c9e2f7 1px solid;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	margin-top:10px;
+ *margin-top:10px;
+}
+.left_side ul {
+	font-size:16px;
+	font-weight:bold;
+	padding-left:20px;
+	padding-top:20px;
+	width:206px;
+}
+.left_side ul li {
+	height:31px;
+	width:206px;
+	line-height:31px;
+	text-align:center;
+	padding-bottom:5px;
+	background-image:url(../images/nav_bg.jpg);
+	background-repeat: repeat-x;
+}
+.left_side ul li a:link {
+	color:#024e94;
+	text-decoration: none;
+}
+.left_side ul li a:visited {
+	color:#024e94;
+	background-image:none;
+	text-decoration: none;
+}
+.left_side ul li a:hover {
+	color:#ffffff;
+	background-image:url(../images/btn_list_mouse_on.jpg);
+	height:31px;
+	width:206px;
+	display:block;
+}
+/*右侧*/
+.right_side {
+	float:right;
+	width:762px;
+	height:auto;
+	min-height:640px;
+	_height:640px;
+	background-color:#ffffff;
+	border:#c9e2f7 1px solid;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	margin-top:10px;
+ *margin-top:10px;
+}
+.right_side #title_box {
+	background-image:url(../images/mian_title_bg.jpg);
+	height:35px;
+}
+.right_side #title_box div {
+	font-size:16px;
+	font-weight:bold;
+	color:#024e94;
+	line-height:35px;
+	padding-left:38px;
+	background-image:url(../images/title_ico.gif);
+	background-repeat: no-repeat;
+	background-position: 20px 11px;
+}
+.right_side .select_user_box {
+	height:56px;
+	line-height:56px;
+	padding-left:20px;
+	border-bottom:#CCC 1px dotted;
+	margin-left:20px;
+	margin-right:20px;
+ *margin-left:20px;
+ *margin-right:20px;
+}
+.select_user_box #input_box {
+ *margin-top:15px;
+}
+.select_user_box #select_btn {
+	background:url(../images/btn_select.png);
+	background-repeat: no-repeat;
+	width:81px;
+	height:29px;
+	border:none;
+	cursor:pointer;
+	background-position: center;
+	vertical-align: middle;
+}
+.right_side .other_btn_box {
+	height:56px;
+	margin-left:20px;
+ *margin-left:20px;
+}
+.right_side .other_btn_box .other_btn {
+	vertical-align: middle;
+	border:none;
+	cursor:pointer;
+	background:url(../images/btn_other.png);
+	width:148px;
+	height:27px;
+	margin-top:15px;
+ *margin-top:15px;
+}
+/*信息表单*/	
+.right_side .table_userform {
+	line-height:37px;
+	border:#e3e5e6 1px solid;
+	margin-left:20px;
+	margin-right:20px;
+    *margin-left:20px;
+    *margin-right:20px;
+}
+.table_userform th {
+	font-weight:normal;
+	height:32px;
+	vertical-align:middle;
+	line-height:-35px;
+	background-image:url(../images/userform_titlebg.jpg);
+}
+.table_userform td{
+	text-align:center;}
+.table_userform .td_35{
+	width:35px;
+	}
+.table_userform  #td_bg{
+	background-color:#f2f7fc;}
+.table_userform #operation_font{
+	color:#1589f4;}
+.table_userform #operation_font a{
+	text-decoration: none;
+	color:#1589f4;
+	}
+.table_userform #operation_font a:hover{
+	text-decoration:underline;
+	color:#1589f4;
+	}
+	
+	
+/*pagenum*/
+.page_box{
+	background-image:url(../images/pagenum_bg.jpg);
+	height:25px;
+	margin-left:20px;
+	margin-right:20px;
+	*margin-left:20px;
+	*margin-right:20px;
+	margin-top:10px;
+	*margin-top:10px;
+	}
+.page_box span{
+	margin:0 5px;}
+/*copyright*/
+.copyright_box {
+	height:42px;
+	background-image:url(../images/copyright_bg.jpg);
+	text-align:center;
+	line-height:42px;
+	color:#888888;
+}

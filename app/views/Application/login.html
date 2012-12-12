@@ -1,34 +1,22 @@
 #{extends 'main.html' /}
 
-<div id="main">
-	<div id="headerSpace">育龄妇女信息化管理系统</div>
-	<div id="loginSpace">
-		<table>
-			#{if error != null }
-				<thead>
-					<tr><td colspan="2" align="center" class="login-error">${error}</td></tr>
-				</thead>
-			#{/if}
+<div id="mian_box">
+	<div id="logo_box"></div>
+	<div id="logo_userintbox">
+		<div id="form_css">
+			#{if error != null } ${error} #{/if}
 			<form id="loginForm" action="/login" method="post">
-			<tbody>
-				<tr>
-					<td align="right">管理员姓名：</td>
-					<td align="left"><input type="text" name="name" value="" /></td>
-				</tr>
-				<tr>
-					<td align="right">管理员密码：</td>
-					<td align="left"><input type="password" name="password" value="" /></td>
-				</tr>
-				<tr>
-					<td align="center" colspan="2" style="line-height: 24px; "><a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doLogin()">登录</a></td>
-				</tr>
-			</tbody>
+				<input name="name" type="text" class="input_box" value="" />
+				<input name="password" type="password" class="input_box" value="" />
+				<input name="" type="button" onclick="doLogin()" class="btn_login" />
 			</form>
-		</table>
+		</div>
 	</div>
-	<div id="footerSpace">Copyright © 2010-2012</div>
+	<div id="copyright">
+		@2012-2012 神华准格尔能源有限责任公司
+	</div>
 </div>
-    	
+
 <script>
 	(function (win, $) {
 		
