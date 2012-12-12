@@ -204,8 +204,8 @@ public class Furlough extends Controller {
 			String spouse, String spouseNation, String spouseBirth, String spouseWork,
 			String measure, String live, String tel, String department, String notes) {
 		Map<String, String> result = new HashMap<String, String>();
-		if (department == null || "".equals(department)) {
-			result.put("error", "长假记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
+		if (!Utils.checkString(department)) {
+			result.put("error", "长假记录添加失败，请选择该所属部门。\n如果还未创建部门，请先创建部门后进行添加");
 			renderText(JSON.serialize(result));
 		}
 		models.Furlough newData = new models.Furlough();
@@ -248,7 +248,7 @@ public class Furlough extends Controller {
 			String measure, String live, String tel, String department, String notes) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
-			result.put("error", "长假记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
+			result.put("error", "长假记录添加失败，请选择该所属部门。\n如果还未创建部门，请先创建部门后进行添加");
 			renderText(JSON.serialize(result));
 		}
 		try {

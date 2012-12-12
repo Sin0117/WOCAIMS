@@ -66,6 +66,7 @@ public class Workers extends Model {
 		result.put("girl", this.girl);
 		result.put("contraindication", this.contraindication);
 		result.put("measure", this.measure);
+		result.put("measureDate", this.measureDate == null ? "" : utils.Utils.formatDate(this.measureDate));
 		result.put("notes", this.notes);
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");

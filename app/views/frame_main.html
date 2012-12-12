@@ -55,7 +55,8 @@
 	        $('#fm').form('submit',{  
 	            url: saveUrl,
 	            dataType: 'text',
-	            onSubmit: function(){  
+	            onSubmit: function() {
+console.log($(this).serialize());
 	                return $(this).form('validate');  
 	            },  
 	            success: function(result) {
