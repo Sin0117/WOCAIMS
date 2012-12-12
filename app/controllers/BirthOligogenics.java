@@ -11,12 +11,11 @@ import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-
-import com.mongodb.util.JSON;
-
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
 import utils.Utils;
+
+import com.mongodb.util.JSON;
 /** 出生及节育措施管理. */
 public class BirthOligogenics extends Controller {
 	public static final int PAGE_SIZE = 20;
@@ -39,97 +38,133 @@ public class BirthOligogenics extends Controller {
 						query.criteria("oligogenics.man").contains(keyword), query.criteria("oligogenics.woman").contains(keyword));
 			query.filter("department", dep);
 			lists = query.asList();
+			department = dep.name;
 		} else {
-			fileName += Secure.getAdmin().department.name + ".xls";
+			department = Secure.getAdmin().department.name;
+			fileName += department + ".xls";
 			lists = findAll(keyword, 0, 0);
 		}
 		File f = new File("./excels/" + fileName);
 	    try {
 	    	if (f.exists())
 	    		f.createNewFile();
+	    	int index = 0;
 	        WritableWorkbook wbook = Workbook.createWorkbook(f);
-	        /*
-	        WritableSheet ws = wbook.createSheet("户基本信息卡", 0);
-	        Label label0_0 = new Label(0, 0, "单位");
+	        WritableSheet ws = wbook.createSheet("出生及节育措施花名册", 0);
+	        Label label0_0 = new Label(0, index, "填报单位");
 	        ws.addCell(label0_0);
-	        Label field0_0 = new Label(1, 0, data.department.name);
+	        Label field0_0 = new Label(1, index, department);
 	        ws.addCell(field0_0);
+	        ws.mergeCells(1, index, 13, 0); 
+	        index ++;
 	        
-	        Label label0_1 = new Label(2, 0, "单位编码");
-	        ws.addCell(label0_1);
-	        Label field0_1 = new Label(3, 0, data.department.code);
-	        ws.addCell(field0_1);
-	        
-	        Label label1_0 = new Label(0, 1, "地区属性");
+	        Label label1_0 = new Label(0, index, "夫妇情况");
 	        ws.addCell(label1_0);
-	        Label field1_0 = new Label(1, 1, data.live);
-	        ws.addCell(field1_0);
-	        
-	        Label label1_1 = new Label(2, 1, "建卡日期");
+	        Label label1_1 = new Label(7, index, "婴儿情况");
 	        ws.addCell(label1_1);
-	        Label field1_1 = new Label(3, 1, utils.Utils.formatDate(data.createAt));
-	        ws.addCell(field1_1);
+	        index ++;
 	        
-	        Label label2_0 = new Label(0, 2, "户编码");
+	        Label label2_0 = new Label(0, index, "流动性质");
 	        ws.addCell(label2_0);
-	        Label field2_0 = new Label(1, 2, data.code);
-	        ws.addCell(field2_0);
-	        
-	        Label label2_1 = new Label(2, 2, "户主姓名");
+	        Label label2_1 = new Label(1, index, "男方姓名");
 	        ws.addCell(label2_1);
-	        Label field2_1 = new Label(3, 2, data.user);
-	        ws.addCell(field2_1);
+	        Label label2_2 = new Label(2, index, "女方姓名");
+	        ws.addCell(label2_2);
+	        Label label2_3 = new Label(3, index, "禁忌症");
+	        ws.addCell(label2_3);
+	        Label label2_4 = new Label(4, index, "节育措施");
+	        ws.addCell(label2_4);
+	        Label label2_5 = new Label(5, index, "采取年月日");
+	        ws.addCell(label2_5);
+	        Label label2_6 = new Label(6, index, "手术地点");
+	        ws.addCell(label2_6);
+	        Label label2_7 = new Label(7, index, "出生年月日");
+	        ws.addCell(label2_7);
+	        Label label2_8 = new Label(8, index, "民族");
+	        ws.addCell(label2_8);
+	        Label label2_9 = new Label(9, index, "孩次");
+	        ws.addCell(label2_9);
+	        Label label2_10 = new Label(10, index, "性别");
+	        ws.addCell(label2_10);
+	        Label label2_011 = new Label(11, index, "计划内外");
+	        ws.addCell(label2_011);
+	        Label label2_12 = new Label(12, index, "是否存活");
+	        ws.addCell(label2_12);
+	        Label label2_13 = new Label(13, index, "准生证号");
+	        ws.addCell(label2_13);
+	        Label label2_14 = new Label(14, index, "备注");
+	        ws.addCell(label2_14);
+	        index ++;
 	        
-	        Label label3_0 = new Label(0, 3, "户籍地址");
-	        ws.addCell(label3_0);
-	        Label field3_0 = new Label(1, 3, data.register);
-	        ws.addCell(field3_0);
+	        for (models.BirthOligogenics data : lists) {
+		        Label field3_0 = new Label(0, 2, data.flow);
+		        ws.addCell(field3_0);
+		        
+		        if (data.oligogenics != null) {
+		        	Label field3_1 = new Label(1, 2, data.oligogenics.woman);
+		        	ws.addCell(field3_1);
+		        } else {
+		        	if (data.birthStatus != null) {
+		        		Label field3_1 = new Label(1, 2, data.birthStatus.man);
+			        	ws.addCell(field3_1);
+		        	}
+		        }
+		        
+		        if (data.oligogenics != null) {
+		        	Label field3_2 = new Label(2, 2, data.oligogenics.woman);
+			        ws.addCell(field3_2);
+		        } else {
+		        	if (data.birthStatus != null) {
+		        		Label field3_2 = new Label(2, 2, data.birthStatus.woman);
+				        ws.addCell(field3_2);
+		        	}
+		        }
+		        
+		        Label field3_3 = new Label(3, 2, data.taboo);
+		        ws.addCell(field3_3);
+		        
+		        if (data.oligogenics != null) {
+			        Label field3_4 = new Label(4, 2, data.oligogenics.measure);
+			        ws.addCell(field3_4);
+			        Label field3_5 = new Label(5, 2, utils.Utils.formatDate(data.oligogenics.measureDate));
+			        ws.addCell(field3_5);
+			        Label field3_6 = new Label(6, 2, data.oligogenics.measureLocal);
+			        ws.addCell(field3_6);
+		        }
+		        
+		        if (data.birthStatus != null) {
+			        Label field3_7 = new Label(7, 2, utils.Utils.formatDate(data.birthStatus.birth));
+			        ws.addCell(field3_7);
+			        Label field3_8 = new Label(8, 2, data.birthStatus.nation);
+			        ws.addCell(field3_8);
+			        jxl.write.Number field3_9 = new jxl.write.Number(9, 2, data.birthStatus.size);
+			        ws.addCell(field3_9);
+			        Label field3_10 = new Label(10, 2, data.birthStatus.gender);
+			        ws.addCell(field3_10);
+			        Label field3_11 = new Label(11, 2, data.birthStatus.plan ? "计划内" : "计划外");
+			        ws.addCell(field3_11);
+			        Label field3_12 = new Label(12, 2, data.birthStatus.survival ? "存活" : "死亡");
+			        ws.addCell(field3_12);
+			        Label field3_13 = new Label(13, 2, data.birthStatus.code);
+			        ws.addCell(field3_13);
+		        }
+		        Label field3_14 = new Label(14, 2, data.notes);
+		        ws.addCell(field3_14);
+		        index ++;
+	        }
 	        
-	        Label label3_1 = new Label(2, 3, "本户人数");
-	        ws.addCell(label3_1);
-	        jxl.write.Number field3_1 = new jxl.write.Number(3, 3, data.peoples);
-	        ws.addCell(field3_1);
-	        
-	        Label label4_0 = new Label(0, 4, "本户育龄妇女人数");
+	        Label label4_0 = new Label(0, 6, "填表人");
 	        ws.addCell(label4_0);
-	        jxl.write.Number field4_0 = new jxl.write.Number(1, 4, data.pregnant);
+	        Label field4_0 = new Label(2, index, utils.Utils.formatDate(new Date()));
 	        ws.addCell(field4_0);
-	        
-	        Label label4_1 = new Label(2, 4, "本户少数民族人数");
+	        Label label4_1 = new Label(10, index, "填表日期");
 	        ws.addCell(label4_1);
-	        jxl.write.Number field4_1 = new jxl.write.Number(3, 4, data.minority);
+	        Label field4_1 = new Label(12, index, utils.Utils.formatDate(new Date()));
 	        ws.addCell(field4_1);
-	        
-	        Label label5_0 = new Label(0, 5, "流入人数");
-	        ws.addCell(label5_0);
-	        jxl.write.Number field5_0 = new jxl.write.Number(1, 5, data.into);
-	        ws.addCell(field5_0);
-	        
-	        Label label5_1 = new Label(2, 5, "少数民族流入人数");
-	        ws.addCell(label5_1);
-	        jxl.write.Number field5_1 = new jxl.write.Number(3, 5, data.minorityInto);
-	        ws.addCell(field5_1);
-	        
-	        Label label6_0 = new Label(0, 6, "流出人数");
-	        ws.addCell(label6_0);
-	        jxl.write.Number field6_0 = new jxl.write.Number(1, 6, data.out);
-	        ws.addCell(field6_0);
-	        
-	        Label label6_1 = new Label(2, 6, "少数民族流出人数");
-	        ws.addCell(label6_1);
-	        jxl.write.Number field6_1 = new jxl.write.Number(3, 6, data.minorityOut);
-	        ws.addCell(field6_1);
-	        
-	        Label label7_0 = new Label(0, 7, "记事栏");
-	        ws.addCell(label7_0);
-	        Label field7_0 = new Label(1, 7, data.notes);
-	        ws.addCell(field7_0);
-	        */
 	        wbook.write();
 	        wbook.close();
 	        renderBinary(f, fileName);
 	    } catch (Exception exception) {  
-	        // TODO Auto-generated catch block  
 	    	exception.printStackTrace();
 	    	error(exception);
 	    }
