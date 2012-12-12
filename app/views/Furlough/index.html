@@ -18,8 +18,6 @@
 	            <th field="measure" width="64">节育情况</th>
 	            <th field="live" width="72">住址</th>
 	            <th field="tel" width="72">联系电话</th>
-	            <th field="modifyAt" width="72">修改时间</th>
-	            <th field="createAt" width="72">创建时间</th>  
 	            <th field="notes" width="72">备注</th>
 	        </tr>  
 	    </thead>  
@@ -31,7 +29,59 @@
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('修改长假记录', '@{Furlough.update}')">修改长假记录</a>  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这条长假记录吗？', '@{Furlough.del}')">删除长假记录</a>
 	    #{/if}
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetail()">查看详情</a>
 	    <a href="@{Furlough.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true">导出Excel</a>  
+	</div>
+	
+	<div id="detail" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true">  
+	    <div class="ftitle">休长假职工情况</div>  
+	    <form id="fm" method="post" novalidate>
+	        <div class="fitem">  
+	            <label>职工姓名:</label><span id="detail_name" />
+	        </div>  
+	        <div class="fitem">  
+	            <label>性别:</label><span id="detail_gender" />
+	        </div>
+	        <div class="fitem">  
+	            <label>民族:</label><span id="detail_nation" />
+	        </div>
+	        <div class="fitem">  
+	            <label>出生日期:</label><span id="detail_birth" />
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶姓名:</label><span id="detail_spouse" />
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶民族:</label><span id="detail_spouseNation" />
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶出生日期:</label><span id="detail_spouseBirth" />
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶工作单位:</label><span id="detail_spouseWork" />
+	        </div>
+	        <div class="fitem">  
+	            <label>节育情况:</label><span id="detail_measure" />
+	        </div>
+	        <div class="fitem">  
+	            <label>住址:</label><span id="detail_live" />
+	        </div>
+	        <div class="fitem">  
+	            <label>电话:</label><span id="detail_tel" />
+	        </div>
+	        <div class="fitem">  
+	            <label>工作单位:</label><span id="detail_departmentName" />
+	        </div>
+	        <div class="fitem">  
+	            <label>备注:</label><span id="detail_notes" />
+	        </div>
+	        <div class="fitem">  
+	            <label>创建时间:</label><span id="detail_createAt" />
+	        </div>
+	        <div class="fitem">  
+	            <label>修改时间:</label><span id="detail_modifyAt" />
+	        </div>
+	    </form>  
 	</div>  
 	  
 	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
@@ -53,6 +103,22 @@
 	        <div class="fitem">  
 	            <label>出生日期:</label>  
 	            <input name="birth" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶民族:</label>  
+	            <input name="spouse" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶民族:</label>  
+	            <input name="spouseNation" class="easyui-validatebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶出生日期:</label>  
+	            <input name="spouseBirth" class="easyui-datebox">  
+	        </div>
+	        <div class="fitem">  
+	            <label>配偶工作单位:</label>  
+	            <input name="spouseWork" class="easyui-validatebox">  
 	        </div>
 	        <div class="fitem">  
 	            <label>节育情况:</label>  

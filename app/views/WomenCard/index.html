@@ -27,8 +27,8 @@
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNewCard('添加育龄妇女信息记录', '@{WomenCard.add}')">添加记录</a>  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEditCard('修改育龄妇女信息记录', '@{WomenCard.update}')">修改记录</a>  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这条育龄妇女信息记录吗？', '@{WomenCard.del}')">删除记录</a>
-	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetailCard()">查看记录详情</a>
 	    #{/if}
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetailCard()">查看记录详情</a>
 	    <a href="@{WomenCard.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="return doReport(this);">导出Excel</a>
 	</div>
 	

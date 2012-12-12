@@ -22,6 +22,14 @@ public class Furlough extends Model {
 	public String nation;
 	// 出生年月
 	public Date birth;
+	// 配偶姓名
+	public String spouse;
+	// 配偶民族
+	public String spouseNation;
+	// 配偶出生年月
+	public Date spouseBirth;
+	// 配偶工作单位
+	public String spouseWork;
 	// 节育情况
 	public String measure;
 	// 住址
@@ -42,6 +50,9 @@ public class Furlough extends Model {
 		result.put("name", this.name);
 		result.put("gender", this.gender);
 		result.put("nation", this.nation);
+		result.put("spouse", this.spouse);
+		result.put("spouseNation", this.spouseNation);
+		result.put("spouseWork", this.spouseWork);
 		result.put("measure", this.measure);
 		result.put("live", this.live);
 		result.put("tel", this.tel);
@@ -49,6 +60,7 @@ public class Furlough extends Model {
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");
 		result.put("birth", this.birth == null ? "" : utils.Utils.formatDate(this.birth));
+		result.put("spouseBirth", this.spouseBirth == null ? "" : utils.Utils.formatDate(this.spouseBirth));
 		result.put("createAt", utils.Utils.formatDate(this.createAt));
 		result.put("modifyAt", utils.Utils.formatDate(this.modifyAt));
 		return result;

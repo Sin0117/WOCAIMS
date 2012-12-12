@@ -28,8 +28,8 @@
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNew('新建避孕措施记录', '@{Oligogenics.add}')">添加记录</a>  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('修改避孕措施记录', '@{Oligogenics.update}')">修改记录</a>  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这条避孕措施记录吗？', '@{Oligogenics.del}')">删除记录</a>
-	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetail()">查看记录详情</a>
 	    #{/if}
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doDetail()">查看记录详情</a>
 	    <a href="@{Oligogenics.report(keyword, department)}" class="easyui-linkbutton" iconCls="icon-print" plain="true">导出Excel</a>  
 	</div>
 	

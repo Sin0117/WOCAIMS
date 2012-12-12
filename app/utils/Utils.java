@@ -1,8 +1,6 @@
 package utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +8,9 @@ import java.util.Date;
 import java.util.List;
 
 import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
 import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.WritableCellFormat;
@@ -25,6 +26,8 @@ public class Utils {
 	
 	private static final SimpleDateFormat parseDate = new SimpleDateFormat("MM/dd/yyyy");
 	private static final SimpleDateFormat parseDate1 = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private static WritableCellFormat _wcfFC;
 	/** 时间转化. */
 	public static String formatDate(Date d) {
 		if (d == null)
@@ -68,6 +71,19 @@ public class Utils {
 				result.add(arr[i]);
 		}
 		return result;
+	}
+	/** 获取excel单元格居中的样式. */
+	public static WritableCellFormat reportCellCenterFormat() {
+		if (_wcfFC == null) {
+			try {
+				WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+				_wcfFC = new WritableCellFormat(wfont); 
+				_wcfFC.setAlignment(Alignment.CENTRE);
+			} catch (Exception exc) {
+				exc.printStackTrace();
+			}
+		}
+		return _wcfFC;
 	}
 	/** 检测字符串是否为空. */
 	public static boolean checkString(String str) {

@@ -55,13 +55,15 @@ public class BirthOligogenics extends Controller {
 	        ws.addCell(label0_0);
 	        Label field0_0 = new Label(1, index, department);
 	        ws.addCell(field0_0);
-	        ws.mergeCells(1, index, 13, 0); 
+	        ws.mergeCells(1, index, 14, index); 
 	        index ++;
 	        
-	        Label label1_0 = new Label(0, index, "夫妇情况");
+	        Label label1_0 = new Label(0, index, "夫妇情况", Utils.reportCellCenterFormat());
 	        ws.addCell(label1_0);
-	        Label label1_1 = new Label(7, index, "婴儿情况");
+	        ws.mergeCells(0, index, 6, index); 
+	        Label label1_1 = new Label(7, index, "婴儿情况", Utils.reportCellCenterFormat());
 	        ws.addCell(label1_1);
+	        ws.mergeCells(7, index, 14, index); 
 	        index ++;
 	        
 	        Label label2_0 = new Label(0, index, "流动性质");
@@ -153,14 +155,18 @@ public class BirthOligogenics extends Controller {
 		        index ++;
 	        }
 	        
-	        Label label4_0 = new Label(0, 6, "填表人");
+	        Label label4_0 = new Label(0, index, "填表人", Utils.reportCellCenterFormat());
 	        ws.addCell(label4_0);
-	        Label field4_0 = new Label(2, index, utils.Utils.formatDate(new Date()));
+	        ws.mergeCells(0, index, 1, index); 
+	        Label field4_0 = new Label(2, index, Secure.getAdmin().name);
 	        ws.addCell(field4_0);
-	        Label label4_1 = new Label(10, index, "填表日期");
+	        ws.mergeCells(2, index, 9, index); 
+	        Label label4_1 = new Label(10, index, "填表日期", Utils.reportCellCenterFormat());
 	        ws.addCell(label4_1);
+	        ws.mergeCells(10, index, 11, index); 
 	        Label field4_1 = new Label(12, index, utils.Utils.formatDate(new Date()));
 	        ws.addCell(field4_1);
+	        ws.mergeCells(12, index, 14, index); 
 	        wbook.write();
 	        wbook.close();
 	        renderBinary(f, fileName);
