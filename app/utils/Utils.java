@@ -93,6 +93,16 @@ public class Utils {
 		return false;
 	}
 	
+	/** 转化成编码. */
+	public static String toCode(long index) {
+		String cur = String.valueOf(index);
+		StringBuffer str = new StringBuffer(cur);
+		for (int i = 5; i > cur.length(); i --) {
+			str.insert(0, 0);
+		}
+		return str.toString();
+	}
+	
 	public static File toExcel(String name) {
 		File f = new File("./excels/" + name);
 	    try {

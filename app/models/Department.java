@@ -25,6 +25,15 @@ public class Department extends Model {
 	public Department parent;
 	// 创建时间
 	public Date createAt;
+	// 部门人数
+	public long size;
+	
+	// 部门人数增加
+	public long increment() {
+		this.size ++;
+		this.save();
+		return this.size;
+	}
 	
 	@Util
 	public String getDepartmentName() {

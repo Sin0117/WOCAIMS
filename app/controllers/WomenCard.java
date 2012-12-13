@@ -346,7 +346,7 @@ public class WomenCard extends Controller {
 	}
 	
 	/** 添加操作 */
-	public static void add(String woman, String womanCode, String womanBirth, String womanNation, String womanMarriage,
+	public static void add(String woman, String womanBirth, String womanNation, String womanMarriage,
 			String womanFirstMarriage, String womanCurrentMarriage, String womanProfession, 
 			String womanNature, String womanCulture, String womanProperties, String womanRegister,
 			String womanLive, String womanLiveNature, String womanFlowNature, String womanFlowDate, String manFlowDate,
@@ -362,10 +362,12 @@ public class WomenCard extends Controller {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
 			renderText(JSON.serialize(result));
 		}
+		/*
 		models.WomenCard existCard = isExist(womanCode, department, null);
 		if (existCard != null) {
 			result.put("error", "人员添加失败，" + existCard.woman + "(" + existCard.womanCode + ")已经存在！");
 		} else {
+		*/
 			Date newDate = new Date();
 			models.Department dep = models.Department.findById(department);
 			models.WomenCard newData = new models.WomenCard();
@@ -434,7 +436,7 @@ public class WomenCard extends Controller {
 				newData.oligogenics = newOlig.save();
 			}
 			
-			newData.womanCode = womanCode;
+			newData.womanCode = dep.code + Utils.toCode(dep.increment());
 			newData.houseCode = houseCode;
 			newData.woman = woman;
 			newData.man = man;
@@ -478,7 +480,7 @@ public class WomenCard extends Controller {
 			newData.department = dep;
 			newData.notes = notes;
 			newData.save();
-		}
+		// }
 		renderText(JSON.serialize(result));
 	}
 	
@@ -495,7 +497,7 @@ public class WomenCard extends Controller {
 	}
 	
 	/** 修改操作 */
-	public static void update(String id, String woman, String womanCode, String womanBirth, String womanNation, String womanMarriage,
+	public static void update(String id, String woman, String womanBirth, String womanNation, String womanMarriage,
 			String womanFirstMarriage, String womanCurrentMarriage, String womanProfession, 
 			String womanNature, String womanCulture, String womanProperties, String womanRegister,
 			String womanLive, String womanLiveNature, String womanFlowNature, String womanFlowDate, String manFlowDate,
@@ -593,7 +595,6 @@ public class WomenCard extends Controller {
 			newOlig.department = dep;
 			newOlig = newOlig.save();
 			
-			cur.womanCode = womanCode;
 			cur.houseCode = houseCode;
 			cur.woman = woman;
 			cur.man = man;
