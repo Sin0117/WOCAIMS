@@ -10,6 +10,9 @@ import java.util.Map;
 import com.mongodb.util.JSON;
 
 import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
 import jxl.write.DateTime;
 import jxl.write.Label;
 import jxl.write.WritableCellFormat;
@@ -43,79 +46,87 @@ public class Household extends Controller {
 	    		f.createNewFile();
 	        WritableWorkbook wbook = Workbook.createWorkbook(f);
 	        WritableSheet ws = wbook.createSheet("户基本信息卡", 0);
-	        Label label0_0 = new Label(0, 0, "单位");
+	        
+	        WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			Label label0_00 = new Label(0, 0, "户基本信息卡",wcfFC);
+			ws.addCell(label0_00);
+			ws.mergeCells(0, 0, 3, 0);
+			
+	        Label label0_0 = new Label(0, 1, "单位");
 	        ws.addCell(label0_0);
-	        Label field0_0 = new Label(1, 0, data.department.name);
+	        Label field0_0 = new Label(1, 1, data.department.name);
 	        ws.addCell(field0_0);
 	        
-	        Label label0_1 = new Label(2, 0, "单位编码");
+	        Label label0_1 = new Label(2, 1, "单位编码");
 	        ws.addCell(label0_1);
-	        Label field0_1 = new Label(3, 0, data.department.code);
+	        Label field0_1 = new Label(3, 1, data.department.code);
 	        ws.addCell(field0_1);
 	        
-	        Label label1_0 = new Label(0, 1, "地区属性");
+	        Label label1_0 = new Label(0, 2, "地区属性");
 	        ws.addCell(label1_0);
-	        Label field1_0 = new Label(1, 1, data.live);
+	        Label field1_0 = new Label(1, 2, data.live);
 	        ws.addCell(field1_0);
 	        
-	        Label label1_1 = new Label(2, 1, "建卡日期");
+	        Label label1_1 = new Label(2, 2, "建卡日期");
 	        ws.addCell(label1_1);
-	        Label field1_1 = new Label(3, 1, utils.Utils.formatDate(data.createAt));
+	        Label field1_1 = new Label(3, 2, utils.Utils.formatDate(data.createAt));
 	        ws.addCell(field1_1);
 	        
-	        Label label2_0 = new Label(0, 2, "户编码");
+	        Label label2_0 = new Label(0, 3, "户编码");
 	        ws.addCell(label2_0);
-	        Label field2_0 = new Label(1, 2, data.code);
+	        Label field2_0 = new Label(1, 3, data.code);
 	        ws.addCell(field2_0);
 	        
-	        Label label2_1 = new Label(2, 2, "户主姓名");
+	        Label label2_1 = new Label(2, 3, "户主姓名");
 	        ws.addCell(label2_1);
-	        Label field2_1 = new Label(3, 2, data.user);
+	        Label field2_1 = new Label(3, 3, data.user);
 	        ws.addCell(field2_1);
 	        
-	        Label label3_0 = new Label(0, 3, "户籍地址");
+	        Label label3_0 = new Label(0, 4, "户籍地址");
 	        ws.addCell(label3_0);
-	        Label field3_0 = new Label(1, 3, data.register);
+	        Label field3_0 = new Label(1, 4, data.register);
 	        ws.addCell(field3_0);
 	        
-	        Label label3_1 = new Label(2, 3, "本户人数");
+	        Label label3_1 = new Label(2, 4, "本户人数");
 	        ws.addCell(label3_1);
-	        jxl.write.Number field3_1 = new jxl.write.Number(3, 3, data.peoples);
+	        jxl.write.Number field3_1 = new jxl.write.Number(3, 4, data.peoples);
 	        ws.addCell(field3_1);
 	        
-	        Label label4_0 = new Label(0, 4, "本户育龄妇女人数");
+	        Label label4_0 = new Label(0, 5, "本户育龄妇女人数");
 	        ws.addCell(label4_0);
-	        jxl.write.Number field4_0 = new jxl.write.Number(1, 4, data.pregnant);
+	        jxl.write.Number field4_0 = new jxl.write.Number(1, 5, data.pregnant);
 	        ws.addCell(field4_0);
 	        
-	        Label label4_1 = new Label(2, 4, "本户少数民族人数");
+	        Label label4_1 = new Label(2, 5, "本户少数民族人数");
 	        ws.addCell(label4_1);
-	        jxl.write.Number field4_1 = new jxl.write.Number(3, 4, data.minority);
+	        jxl.write.Number field4_1 = new jxl.write.Number(3, 5, data.minority);
 	        ws.addCell(field4_1);
 	        
-	        Label label5_0 = new Label(0, 5, "流入人数");
+	        Label label5_0 = new Label(0, 6, "流入人数");
 	        ws.addCell(label5_0);
-	        jxl.write.Number field5_0 = new jxl.write.Number(1, 5, data.into);
+	        jxl.write.Number field5_0 = new jxl.write.Number(1, 6, data.into);
 	        ws.addCell(field5_0);
 	        
-	        Label label5_1 = new Label(2, 5, "少数民族流入人数");
+	        Label label5_1 = new Label(2, 6, "少数民族流入人数");
 	        ws.addCell(label5_1);
-	        jxl.write.Number field5_1 = new jxl.write.Number(3, 5, data.minorityInto);
+	        jxl.write.Number field5_1 = new jxl.write.Number(3, 6, data.minorityInto);
 	        ws.addCell(field5_1);
 	        
-	        Label label6_0 = new Label(0, 6, "流出人数");
+	        Label label6_0 = new Label(0, 7, "流出人数");
 	        ws.addCell(label6_0);
-	        jxl.write.Number field6_0 = new jxl.write.Number(1, 6, data.out);
+	        jxl.write.Number field6_0 = new jxl.write.Number(1, 7, data.out);
 	        ws.addCell(field6_0);
 	        
-	        Label label6_1 = new Label(2, 6, "少数民族流出人数");
+	        Label label6_1 = new Label(2, 7, "少数民族流出人数");
 	        ws.addCell(label6_1);
-	        jxl.write.Number field6_1 = new jxl.write.Number(3, 6, data.minorityOut);
+	        jxl.write.Number field6_1 = new jxl.write.Number(3, 7, data.minorityOut);
 	        ws.addCell(field6_1);
 	        
-	        Label label7_0 = new Label(0, 7, "记事栏");
+	        Label label7_0 = new Label(0, 8, "记事栏");
 	        ws.addCell(label7_0);
-	        Label field7_0 = new Label(1, 7, data.notes);
+	        Label field7_0 = new Label(1, 8, data.notes);
 	        ws.addCell(field7_0);
 	        
 	        wbook.write();

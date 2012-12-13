@@ -10,7 +10,12 @@ import java.util.Map;
 import com.mongodb.util.JSON;
 
 import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
 import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import play.modules.morphia.Model.MorphiaQuery;
@@ -37,6 +42,15 @@ public class WomenCard extends Controller {
 	    		f.createNewFile();
 	        WritableWorkbook wbook = Workbook.createWorkbook(f);
 	        WritableSheet ws = wbook.createSheet("育龄妇女基础信息卡", 0);
+	        
+	        WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			Label label0_00 = new Label(0, index, "育龄妇女基础信息卡",wcfFC);
+			ws.addCell(label0_00);
+			ws.mergeCells(0, index, 11, 0);
+			
+			index++;
 	        Label label0_0 = new Label(0, index, "单位");
 	        ws.addCell(label0_0);
 	        Label field0_0 = new Label(2, index, data.department.name);
