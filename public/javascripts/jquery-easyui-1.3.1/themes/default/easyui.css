@@ -240,7 +240,8 @@
 }
 .combobox-item-selected{
 	background:#FBEC88;
-}.datagrid .panel-body{
+}
+.datagrid .panel-body{
 	overflow:hidden;
 }
 .datagrid-wrap{
@@ -294,9 +295,9 @@
 	background:url('images/datagrid_sort_asc.gif') no-repeat center center;
 }
 .datagrid-toolbar{
-	height:28px;
+	height:25px;
 	background:#efefef;
-	padding:1px 2px;
+	padding:10px 2px;
 	border-bottom:1px solid #ccc;
 }
 .datagrid-btn-separator{
@@ -310,6 +311,7 @@
 	background:#efefef;
 	border-top:1px solid #ccc;
 	position:relative;
+	
 }
 .datagrid-pager-top{
 	border-top:0;
@@ -327,15 +329,18 @@
 	width:10000px;
 }
 .datagrid-header-row{
-	height:25px;
+	height:35px;
+	
 }
 .datagrid-header td{
 	border-right:1px dotted #ccc;
 	font-size:12px;
+	text-align:center;
 	font-weight:normal;
 	background:#fafafa url('images/datagrid_header_bg.gif') repeat-x left bottom;
 	border-bottom:1px dotted #ccc;
 	border-top:1px dotted #fff;
+	
 }
 .datagrid-header td.datagrid-header-over{
 	background:#EBF3FD;
@@ -371,6 +376,7 @@
 	margin:0px;
 	padding:3px 0px;
 	color:#000;
+	
 }
 .datagrid-body{
 	margin:0;
@@ -393,7 +399,7 @@
 	float:left;
 }
 .datagrid-body td,.datagrid-footer td{
-	font-size:12px;
+	font-size:12px; 
 	border-right:1px dotted #ccc;
 	border-bottom:1px dotted #ccc;
 	overflow:hidden;

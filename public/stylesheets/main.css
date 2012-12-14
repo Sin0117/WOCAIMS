@@ -27,9 +27,29 @@ a:hover { text-decoration: underline; }
 #modifySpace table td { line-height: 32px; }
 #modifySpace input { width: 220px; }
 #modifySpace .modify-error { color: #F00; }
+/*搜索框*/	
+.right_side_top{
+	height:60px;
+	margin-top:10px;
+	*margin-top:10px;
+	margin-left:10px;
+	*margin-left:10px;
+	width:775px;
+	background-color:#ffffff;
+	border:#c9e2f7 1px solid;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	background-color:#f4f9fd;
 
+	padding-left:20px;
+	font-size:12px;
+	}
+	.right_side_top{
+		padding-top:30px;
+	}
 /** 内容显示区域 */
-#frameSpace { left: 280px; top: 78px; position: absolute; padding: 4px; }
+#frameSpace {position: absolute; padding: 4px; }
 /** 底部区域 */
 #footerSpace { left: 0px; position: absolute; width: 100%; height: 36px; text-align: center; line-height: 36px; border-top: 2px solid #777; }
 
