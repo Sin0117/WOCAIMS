@@ -17,6 +17,18 @@ public class PhysicalInfo extends Model {
 	public Physical physical;
 	// 检查项内容
 	public String content;
+	// 体检所属档案
+	@Reference(ignoreMissing = false)
+	public HealthArchives health;
+	// 单位
+	@Reference(ignoreMissing = false)
+	public Department department;
+	// 检查结果
+	public String result;
+	// 参考值
+	public String reference;
+	// 医生
+	public String doctor;
 	// 创建时间
 	public Date createAt;
 	// 修改时间
@@ -26,6 +38,13 @@ public class PhysicalInfo extends Model {
 	public Map<String, Object> serialize() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("id", this.getId().toString());
+		result.put("health", this.health.getId());
+		result.put("physical", this.physical.getId());
+		result.put("result", this.result);
+		result.put("reference", this.reference);
+		result.put("doctor", this.doctor);
+		result.put("department", this.department != null ? this.department.serialize() : "");
+		result.put("departmentName", this.department != null ? this.department.name : "");
 		result.put("physical", this.physical.getId());
 		result.put("content", this.content);
 		result.put("createAt", utils.Utils.formatDate(this.createAt));

@@ -22,9 +22,6 @@ public class Physical extends Model {
 	public List<PhysicalInfo> physicalInfo;
 	// 检查项名称
 	public String name;
-	// 检查结果
-	@Reference(ignoreMissing = true)
-	public PhysicalResult results;
 	// 创建时间
 	public Date createAt;
 	// 修改时间
@@ -42,8 +39,6 @@ public class Physical extends Model {
 				infoList.add(children.serialize());
 			result.put("physicalInfo", infoList);
 		}
-		if (results != null)
-			result.put("result", results.serialize());
 		result.put("createAt", utils.Utils.formatDate(this.createAt));
 		result.put("modifyAt", utils.Utils.formatDate(this.modifyAt));
 		return result;

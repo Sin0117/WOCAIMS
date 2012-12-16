@@ -159,7 +159,7 @@
 	
 	<!-- 检查项相关的对话框. -->
 	<div id="physical-detail" class="easyui-dialog" style="width: 400px; height: 280px; padding: 10px 20px;" closed="true">
-		<div class="ftitle">检查项内容</div>
+		<div class="ftitle">检查项</div>
 		<h2>检查项</h2>
         <div class="fitem">  
             <label>检查项名称:</label>  
@@ -168,45 +168,29 @@
         
         <h2>检查项内容</h2>
         <ul id="detailPhysicalInfoList"></ul>
+	</div>
+	
+	<!-- 检查项相关的对话框. -->
+	<div id="physical-info-detail" class="easyui-dialog" style="width: 400px; height: 280px; padding: 10px 20px;" closed="true">
+		<div class="ftitle">检查项内容</div>
+		<h2>检查项</h2>
+        <div class="fitem">  
+            <label>详情:</label>  
+            <span id="detail_physical_info_content" />  
+        </div>
         
         <h2>检查结果</h2>
         <div class="fitem">  
             <label>结果:</label>  
-            <span id="detail_physical_result" />  
+            <span id="detail_physical_info_result" />  
         </div>
         <div class="fitem">  
             <label>参考值:</label>  
-            <span id="detail_physical_reference" />  
+            <span id="detail_physical_info_reference" />  
         </div>
         <div class="fitem">  
             <label>检查医生:</label>  
-            <span id="detail_physical_doctor" />  
-        </div>
-        
-        <h2>治疗以及建议</h2>
-        <div class="fitem">  
-            <label>检查异常结果汇总:</label>  
-            <span id="detail_physical_summary" />  
-        </div>
-        <div class="fitem">  
-            <label>结论:</label>  
-            <span id="detail_physical_conclusion" />  
-        </div>
-        <div class="fitem">  
-            <label>治疗意见或建议:</label>  
-            <span id="detail_physical_treatment" />  
-        </div>
-        <div class="fitem">  
-            <label>健康咨询地址:</label>  
-            <span id="detail_physical_address" />  
-        </div>
-        <div class="fitem">  
-            <label>咨询电话:</label>  
-            <span id="detail_physical_tel" />  
-        </div>
-        <div class="fitem">  
-            <label>主检医生:</label>  
-            <span id="detail_physical_treatmentDoctor" />  
+            <span id="detail_physical_info_doctor" />  
         </div>
 	</div>
 	
@@ -285,6 +269,21 @@
 	        <ul id="physicalInfoList"></ul>
 	        <a href="javascript:void(0)" class="easyui-linkbutton add-phy-info" iconCls="icon-add" onclick="addPhysicalInfo()">添加检查内容</a>
 	        <input type="hidden" id="physicalInfoIpt" name="content" value="" />
+	    </form>  
+	</div>  
+	<div id="physical-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doPhysicalSave()">确定</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#physical-dlg').dialog('close')">取消</a>  
+	</div>
+	
+	<div id="physical-info-dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#physical-info-buttons">  
+	    <div class="ftitle">检查项内容</div>  
+	    <form id="physicalInfoForm" method="post" novalidate>
+	    	<h2>检查项内容</h2>
+	        <div class="fitem">  
+	            <label>详情:</label>  
+	            <input name="content" class="easyui-validatebox" required="true">  
+	        </div>
 	        
 	        <h2>检查结果</h2>
 	        <div class="fitem">  
@@ -301,9 +300,9 @@
 	        </div>
 	    </form>  
 	</div>  
-	<div id="physical-buttons">  
-	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doPhysicalSave()">确定</a>
-	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#physical-dlg').dialog('close')">取消</a>  
+	<div id="physical-info-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doPhysicalInfoSave()">确定</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#physical-info-dlg').dialog('close')">取消</a>  
 	</div>
 </div>
 <script>
@@ -323,6 +322,7 @@
             $('#dlg').dialog('open').dialog('setTitle', title);  
             $('#fm').form('load', row);
             $('#physicalList').html('');
+            $('#treatmentList').html('');
             if (!row.department) {
 	            $('#departmentSel').val(row.id);
             } else {
@@ -472,6 +472,10 @@
             }  
         });  
 	}
+	/** 保存检查项详情. */
+	function doPhysicalInfoSave() {
+		
+	}
 	/** 保存主检报告. */
 	function doTreatmentSave() {
 		var newTreatment = $('#treatmentForm').serialize();
@@ -518,6 +522,10 @@
 		newItem.push('<a href="javascript:void(0)" onclick="removeItem(this.parentNode)" title="删除">X</a>');
 		newItem.push('</li>');
 		list.append(newItem.join(''));
+	}
+	
+	function renderPhysicalInfo() {
+		
 	}
 	/** 渲染一个主检报告详情 */
 	function renderDetailTreatment(summary, conclusion, treatment, address, tel, doctor, id) {
@@ -578,6 +586,9 @@
 	}
 	/** 添加检查项详情 */
 	function addPhysicalInfo() {
+		// sjx
+		$('#physical-info-dlg').dialog('open').dialog('setTitle', "添加检查项详情");  
+        $('#physicalInfoForm').form('clear');
 		var list = $('#physicalInfoList'), newItem = ['<li>'];
 		newItem.push('详情：<input type="text" value="" class="phyInfoIpt" />');
 		newItem.push('<a href="javascript:void(0)" onclick="removeItem(this.parentNode)" title="删除">X</a>');

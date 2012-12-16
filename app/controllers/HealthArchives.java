@@ -277,8 +277,8 @@ public class HealthArchives extends Controller {
 				List<String> physicalArr = Utils.toStringArray(physicals, "#S#");
 				List<models.Physical> childrenList = new ArrayList<models.Physical>();
 				for (int i = 0; i < physicalArr.size(); i ++) {
-					// data format: name,content,result,reference,doctor,id|... 
-					String[] contentAt = physicalArr.get(i).split("#,#", 6);
+					// data format: name,content,id|... 
+					String[] contentAt = physicalArr.get(i).split("#,#", 3);
 					models.Physical newPhy = new models.Physical();
 					if (contentAt.length > 0)
 						newPhy.name = contentAt[0];
@@ -290,35 +290,28 @@ public class HealthArchives extends Controller {
 					// 添加检查项内容
 					if (contentAt.length > 1 && Utils.checkString(contentAt[1])) {
 						List<models.PhysicalInfo> infoList = new ArrayList<models.PhysicalInfo>();
+						// content,result,reference,doctor,id
 						List<String> infoArr = Utils.toStringArray(contentAt[1], "#T#");
 						for (int j = 0; j < infoArr.size(); j ++) {
+							String[] info = infoArr.get(j).split("#E#", 5);
 							models.PhysicalInfo newInfo = new models.PhysicalInfo();
-							newInfo.content = infoArr.get(j);
+							if (contentAt.length > 0)
+								newInfo.content = info[0];
+							if (contentAt.length > 1)
+								newInfo.result = info[0];
+							if (contentAt.length > 2)
+								newInfo.reference = info[0];
+							if (contentAt.length > 3)
+								newInfo.doctor = info[0];
 							newInfo.physical = newPhy;
+							newInfo.health = newData;
+							newInfo.department = curDep;
 							newInfo.createAt = newDate;
 							newInfo.modifyAt = newDate;
 							newInfo = newInfo.save();
 							infoList.add(newInfo);
 						}
 						newPhy.physicalInfo = infoList;
-					}
-					// 检查结果
-					if ((contentAt.length > 2 && Utils.checkString(contentAt[2]))
-							|| (contentAt.length > 4 && Utils.checkString(contentAt[4]))) {
-						models.PhysicalResult newResult = new models.PhysicalResult();
-						newResult.health = newData;
-						newResult.physical = newPhy;
-						if (contentAt.length > 2)
-							newResult.result = contentAt[2];
-						if (contentAt.length > 3)
-							newResult.reference = contentAt[3];
-						if (contentAt.length > 4)
-							newResult.doctor = contentAt[4];
-						newResult.department = curDep;
-						newResult.createAt = newDate;
-						newResult.modifyAt = newDate;
-						newResult = newResult.save();
-						newPhy.results = newResult;
 					}
 					newPhy = newPhy.save();
 					childrenList.add(newPhy);
@@ -428,38 +421,31 @@ public class HealthArchives extends Controller {
 						List<models.PhysicalInfo> infoList = new ArrayList<models.PhysicalInfo>();
 						List<String> infoArr = Utils.toStringArray(contentAt[1], "#T#");
 						for (int j = 0; j < infoArr.size(); j ++) {
-							models.PhysicalInfo newInfo = new models.PhysicalInfo();
-							newInfo.content = infoArr.get(j);
+							// content,result,reference,doctor,id
+							String[] info = infoArr.get(j).split("#E#", 5);
+							models.PhysicalInfo newInfo = null;
+							if (Utils.checkString(info[4])) {
+								newInfo = models.PhysicalInfo.findById(info[4]);
+							} else {
+								newInfo = new models.PhysicalInfo();
+								newInfo.createAt = modifyDate;
+							}
+							if (contentAt.length > 0)
+								newInfo.content = info[0];
+							if (contentAt.length > 1)
+								newInfo.result = info[0];
+							if (contentAt.length > 2)
+								newInfo.reference = info[0];
+							if (contentAt.length > 3)
+								newInfo.doctor = info[0];
 							newInfo.physical = newPhy;
-							newInfo.createAt = modifyDate;
+							newInfo.health = cur;
+							newInfo.department = curDep;
 							newInfo.modifyAt = modifyDate;
 							newInfo = newInfo.save();
 							infoList.add(newInfo);
 						}
 						newPhy.physicalInfo = infoList;
-					}
-					// 检查结果
-					if ((contentAt.length > 2 && Utils.checkString(contentAt[2]) ) || 
-							(contentAt.length > 4 && Utils.checkString(contentAt[4]))) {
-						models.PhysicalResult newResult = null;
-						if (newPhy.results != null) {
-							newResult = newPhy.results;
-						} else {
-							newResult = new models.PhysicalResult();
-							newResult.createAt = modifyDate;
-						}
-						newResult.health = cur;
-						newResult.physical = newPhy;
-						if (contentAt.length > 2)
-							newResult.result = contentAt[2];
-						if (contentAt.length > 3)
-							newResult.reference = contentAt[3];
-						if (contentAt.length > 4)
-							newResult.doctor = contentAt[4];
-						newResult.department = curDep;
-						newResult.modifyAt = modifyDate;
-						newResult = newResult.save();
-						newPhy.results = newResult;
 					}
 					newPhy = newPhy.save();
 					childrenList.add(newPhy);
@@ -472,7 +458,6 @@ public class HealthArchives extends Controller {
 				}
 				cur.physicals = null;
 			}
-System.out.println(treatments);
 			if (Utils.checkString(treatments)) {
 				// summary,conclusion,treatment,address,tel,treatmentDoctor,id#S#...
 				List<models.PhysicalTreatment> treatmentList = new ArrayList<models.PhysicalTreatment>();
