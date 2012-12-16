@@ -333,18 +333,18 @@ public class HealthArchives extends Controller {
 				for (int i = 0; i < treatmentStr.size(); i ++) {
 					String[] contentAt = treatmentStr.get(i).split("#,#", 7);
 					models.PhysicalTreatment newTra = new models.PhysicalTreatment();
+					if (contentAt.length > 0)
+						newTra.summary = contentAt[0];
+					if (contentAt.length > 1)
+						newTra.conclusion = contentAt[1];
+					if (contentAt.length > 2)
+						newTra.treatment = contentAt[2];
+					if (contentAt.length > 3)
+						newTra.address = contentAt[3];
+					if (contentAt.length > 4)
+						newTra.tel = contentAt[4];
 					if (contentAt.length > 5)
-						newTra.summary = contentAt[5];
-					if (contentAt.length > 6)
-						newTra.conclusion = contentAt[6];
-					if (contentAt.length > 7)
-						newTra.treatment = contentAt[7];
-					if (contentAt.length > 8)
-						newTra.address = contentAt[8];
-					if (contentAt.length > 9)
-						newTra.tel = contentAt[9];
-					if (contentAt.length > 10)
-						newTra.treatmentDoctor = contentAt[10];
+						newTra.treatmentDoctor = contentAt[5];
 					newTra.department = curDep;
 					newTra.createAt = newDate;
 					newTra.modifyAt = newDate;
@@ -472,7 +472,7 @@ public class HealthArchives extends Controller {
 				}
 				cur.physicals = null;
 			}
-			
+System.out.println(treatments);
 			if (Utils.checkString(treatments)) {
 				// summary,conclusion,treatment,address,tel,treatmentDoctor,id#S#...
 				List<models.PhysicalTreatment> treatmentList = new ArrayList<models.PhysicalTreatment>();

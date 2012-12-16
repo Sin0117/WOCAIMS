@@ -16,47 +16,45 @@
 	
 	<body>
 	<div id="main">
-	<div class="top_box">
-	  <div class="logo"> <img src="@{'/public/images/logo.png'}" width="384" height="63" /></div>
-	  <div class="right_user_info">您好，<span id="userName" style="color:white;">${admin.name}</span>,欢迎来到&nbsp;<span style="color:white;">${admin.department.name}</span>&nbsp;|&nbsp;
-	     <a href="/modify" target="contentSpace">修改密码</a>&nbsp;|&nbsp;<a href="/logout">退出</a>
-	  </div>
-	</div>
-	<div class="mian_box">
-		<div id="" class="left_side">
-			<ul>
-				<li><a href="@{Household.index()}" target="contentSpace">户信息管理</a></li>
-				<li><a href="@{WomenCard.index()}" target="contentSpace">育龄妇女基础信息管理</a></li>
-				<li><a href="@{BirthStatus.index()}" target="contentSpace">出生情况管理</a></li>
-				<li><a href="@{Conceive.index()}" target="contentSpace">现孕信息管理</a></li>
-				<li><a href="@{Oligogenics.index()}" target="contentSpace">避孕节育措施管理</a></li>
-				<li><a href="@{Acyeterion.index()}" target="contentSpace">避孕药品登记</a></li>
-				<li><a href="@{OnlyChildren.index()}" target="contentSpace">独生子女领证及奖励</a></li>
-				<li><a href="@{BirthOligogenics.index()}" target="contentSpace">出生及节育措施管理</a></li>
-				<li><a href="@{Workers.index()}" target="contentSpace">男职工登记管理</a></li>
-				<li><a href="@{RentalHouse.index()}" target="contentSpace">出租房屋管理</a></li>
-				<li><a href="@{Furlough.index()}" target="contentSpace">休长假职工管理</a></li>
-				<li><a href="@{Flup.index()}" target="contentSpace">随访信息管理</a></li>
-				<li><a href="@{HealthArchives.index()}" target="contentSpace">健康档案管理</a></li>
-				#{if admin.department.type == models.enums.DepartmentLevel.UNION}
-				<li><a href="@{Department.index()}" target="contentSpace">部门信息管理</a></li>
-				<li><a href="@{Administrator.index()}" target="contentSpace">部门人员管理</a></li>
-				#{/if}
-				<li><a href="@{Planning.index()}" target="contentSpace">计划生育报表</a></li>
-			</ul>
+		<div class="top_box">
+		  <div class="logo"> <img src="@{'/public/images/logo.png'}" width="384" height="63" /></div>
+		  <div class="right_user_info">您好，<span id="userName" style="color:white;">${admin.name}</span>,欢迎来到&nbsp;<span style="color:white;">${admin.department.name}</span>&nbsp;|&nbsp;
+		     <a href="/modify" target="contentSpace">修改密码</a>&nbsp;|&nbsp;<a href="/logout">退出</a>
+		  </div>
 		</div>
-		<div id="frameSpace"><iframe name="contentSpace" id="contentSpace" frameborder="0"></iframe></div>
+		<div id="contentViewSpace" class="mian_box">
+			<div id="menuSpace" class="left_side">
+				<ul>
+					<li><a href="@{Household.index()}" target="contentSpace">户信息管理</a></li>
+					<li><a href="@{WomenCard.index()}" target="contentSpace">育龄妇女基础信息管理</a></li>
+					<li><a href="@{BirthStatus.index()}" target="contentSpace">出生情况管理</a></li>
+					<li><a href="@{Conceive.index()}" target="contentSpace">现孕信息管理</a></li>
+					<li><a href="@{Oligogenics.index()}" target="contentSpace">避孕节育措施管理</a></li>
+					<li><a href="@{Acyeterion.index()}" target="contentSpace">避孕药品登记</a></li>
+					<li><a href="@{OnlyChildren.index()}" target="contentSpace">独生子女领证及奖励</a></li>
+					<li><a href="@{BirthOligogenics.index()}" target="contentSpace">出生及节育措施管理</a></li>
+					<li><a href="@{Workers.index()}" target="contentSpace">男职工登记管理</a></li>
+					<li><a href="@{RentalHouse.index()}" target="contentSpace">出租房屋管理</a></li>
+					<li><a href="@{Furlough.index()}" target="contentSpace">休长假职工管理</a></li>
+					<li><a href="@{Flup.index()}" target="contentSpace">随访信息管理</a></li>
+					<li><a href="@{HealthArchives.index()}" target="contentSpace">健康档案管理</a></li>
+					#{if admin.department.type == models.enums.DepartmentLevel.UNION}
+					<li><a href="@{Department.index()}" target="contentSpace">部门信息管理</a></li>
+					<li><a href="@{Administrator.index()}" target="contentSpace">部门人员管理</a></li>
+					#{/if}
+					<li><a href="@{Planning.index()}" target="contentSpace">计划生育报表</a></li>
+				</ul>
+			</div>
+			<div id="frameSpace"><iframe name="contentSpace" id="contentSpace" frameborder="0"></iframe></div>
+		</div>
+		<div id="footerSpace" class="copyright_box">@2012-2012  神华准格尔能源有限责任公司</div>
 	</div>
-	<div class="h_space"></div>
-	<div class="copyright_box">@2012-2012  神华准格尔能源有限责任公司</div>
-</div>
 	</body>
 </html>
 
     	
 <script>
 	(function (win, $) {
-		
 		$(win).bind({
 			resize: function (evt) {
 				doLayout();
@@ -71,23 +69,20 @@
 		})
 		
 		$(function () {
-			
-			
 			doLayout();
-		})
-		
+		});
 	})(window, jQuery);
 	
 	function doLayout() {
-		var $win = $(window), fh = $win.height() - 88, fw = $win.width() - 170;
-		
+		var $win = $(window), fh = $win.height() - 105, fw = 1020 - 212;
 		$('#main').height($win.height());
-		$('#menuSpace').height(fh);
-		$('#frameSpace').width(fw).height(fh);
-		$('#contentSpace').width(fw - 8).height(fh - 8);
+		$('#menuSpace').height(fh - 20);
+		$('#frameSpace').width(fw).height(fh - 20);
+		$('#contentViewSpace').height(fh - 18);
+		$('#contentSpace').width(fw - 4).height(fh - 4);
 		$('#footerSpace').css({
-			top: fh + 48 + 'px'
-		})
+			top: fh + 63 + 'px'
+		});
 		
 	}
 </script>

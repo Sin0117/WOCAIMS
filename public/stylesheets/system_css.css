@@ -17,9 +17,10 @@ ul {
 	margin:0px;
 }
 .mian_box {
-	width:1040px;
-	margin:0 auto;
-
+	position: relative;
+	width: 1020px;
+	margin:10px auto;
+	overflow: hidden;
 }
 .top_box {
 	height:63px;
@@ -51,25 +52,12 @@ ul {
 	color:#ffffff;
 }
 .left_side {
-	float:left;
-	width:210px;
-	height:auto;
-	min-height:640px;
-	_height:640px;
-	background-color:#f4f9fd;
-	border:#c9e2f7 1px solid;
-	border-radius:5px;
-	-moz-border-radius:5px;
-	-webkit-border-radius:5px;
-	margin-top:10px;
- *margin-top:10px;
+	
 }
 .left_side ul {
-	font-size:14px;
-	font-weight:bold;
-	padding-left:15px;
-	padding-top:20px;
-	width:206px;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 20px 0px 20px 15px;
 }
 .left_side ul li {
 	height:31px;
@@ -224,13 +212,4 @@ ul {
 	margin-top:10px;
 	*margin-top:10px;
 	}
-.page_box span{
-	margin:0 5px;}
-/*copyright*/
-.copyright_box {
-	height:42px;
-	background-image:url(../images/copyright_bg.jpg);
-	text-align:center;
-	line-height:42px;
-	color:#888888;
-}
+.page_box span{ margin:0 5px; }

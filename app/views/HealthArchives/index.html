@@ -82,6 +82,9 @@
         
         <h2>检查项</h2>
         <ul id="detailPhysicalList"></ul>
+        
+        <h2>主检报告</h2>
+        <ul id="detailTreatmentList"></ul>
 	</div>
 	  
 	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
@@ -142,6 +145,11 @@
 	        <ul id="physicalList"></ul>
 	        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" onclick="addPhysical()">添加检查项</a>
 	        <input type="hidden" id="physicalIpt" name="physicals" value="" />
+	        
+	        <h2>主检报告</h2>
+	        <ul id="treatmentList"></ul>
+	        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" onclick="addTreatment()">添加主检报告</a>
+	        <input type="hidden" id="treatmentIpt" name="treatments" value="" />
 	    </form>  
 	</div>  
 	<div id="dlg-buttons">  
@@ -201,6 +209,69 @@
             <span id="detail_physical_treatmentDoctor" />  
         </div>
 	</div>
+	
+	<!-- 主检报告相关的对话框. -->
+	<div id="treatment-detail" class="easyui-dialog" style="width: 400px; height: 280px; padding: 10px 20px;" closed="true">
+		<div class="ftitle">主检报告内容</div>
+        <div class="fitem">  
+            <label>检查异常结果汇总:</label>  
+            <span id="detail_treatment_summary" />  
+        </div>
+        <div class="fitem">  
+            <label>结论:</label>  
+            <span id="detail_treatment_conclusion" />  
+        </div>
+        <div class="fitem">  
+            <label>治疗意见或建议:</label>  
+            <span id="detail_treatment_treatment" />  
+        </div>
+        <div class="fitem">  
+            <label>健康咨询地址:</label>  
+            <span id="detail_treatment_address" />  
+        </div>
+        <div class="fitem">  
+            <label>咨询电话:</label>  
+            <span id="detail_treatment_tel" />  
+        </div>
+        <div class="fitem">  
+            <label>主检医生:</label>  
+            <span id="detail_treatment_treatmentDoctor" />  
+        </div>
+	</div>
+	
+	<div id="treatment-dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#treatment-buttons">  
+	    <div class="ftitle">检查项信息</div>  
+	    <form id="treatmentForm" method="post" novalidate>
+	        <div class="fitem">
+	            <label>检查异常结果汇总:</label>
+	            <input name="summary" class="easyui-validatebox">
+	        </div>
+	        <div class="fitem">
+	            <label>结论:</label>
+	            <input name="conclusion" class="easyui-validatebox">
+	        </div>
+	        <div class="fitem">
+	            <label>治疗意见或建议:</label>
+	            <input name="treatment" class="easyui-validatebox">
+	        </div>
+	        <div class="fitem">
+	            <label>健康咨询地址:</label>
+	            <input name="address" class="easyui-validatebox">
+	        </div>
+	        <div class="fitem">
+	            <label>咨询电话:</label>
+	            <input name="tel" class="easyui-validatebox">
+	        </div>
+	        <div class="fitem">
+	            <label>主检医生:</label>
+	            <input name="treatmentDoctor" class="easyui-validatebox">
+	        </div>
+	    </form>  
+	</div>  
+	<div id="treatment-buttons">  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="doTreatmentSave()">确定</a>
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#treatment-dlg').dialog('close')">取消</a>  
+	</div>
 	  
 	<div id="physical-dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px" closed="true" buttons="#physical-buttons">  
 	    <div class="ftitle">检查项信息</div>  
@@ -227,32 +298,6 @@
 	        <div class="fitem">  
 	            <label>检查医生:</label>  
 	            <input name="doctor" class="easyui-validatebox">  
-	        </div>
-	        
-	        <h2>治疗以及建议</h2>
-	        <div class="fitem">
-	            <label>检查异常结果汇总:</label>
-	            <input name="summary" class="easyui-validatebox">
-	        </div>
-	        <div class="fitem">
-	            <label>结论:</label>
-	            <input name="conclusion" class="easyui-validatebox">
-	        </div>
-	        <div class="fitem">
-	            <label>治疗意见或建议:</label>
-	            <input name="treatment" class="easyui-validatebox">
-	        </div>
-	        <div class="fitem">
-	            <label>健康咨询地址:</label>
-	            <input name="address" class="easyui-validatebox">
-	        </div>
-	        <div class="fitem">
-	            <label>咨询电话:</label>
-	            <input name="tel" class="easyui-validatebox">
-	        </div>
-	        <div class="fitem">
-	            <label>主检医生:</label>
-	            <input name="treatmentDoctor" class="easyui-validatebox">
 	        </div>
 	    </form>  
 	</div>  
@@ -291,11 +336,13 @@
             				content.push(info.content);
             		}
             		renderPhysical(phy.name, content.join('#T#'), phy.result ? phy.result.result : '',
-            				phy.result ? phy.result.reference : '', phy.result ? phy.result.doctor : '',
-            				phy.treatment ? phy.treatment.summary : '', phy.treatment ? phy.treatment.conclusion : '',
-            				phy.treatment ? phy.treatment.treatment : '', phy.treatment ? phy.treatment.address : '',
-            				phy.treatment ? phy.treatment.tel : '', phy.treatment ? phy.treatment.treatmentDoctor : '',
-            				phy.id);
+            				phy.result ? phy.result.reference : '', phy.result ? phy.result.doctor : '', phy.id);
+            	}
+            }
+            if (!!row.treatments) {
+            	for (var i = 0, tre; tre = row.treatments[i]; i ++) {
+            		renderTreatment(tre ? tre.summary : '', tre ? tre.conclusion : '', tre ? tre.treatment : '', 
+            				tre ? tre.address : '', tre ? tre.tel : '', tre ? tre.treatmentDoctor : '', tre.id);
             	}
             }
             saveUrl = url + '?id='+row.id;  
@@ -307,6 +354,7 @@
         if (row) {
         	$('#detail').dialog('open').dialog('setTitle', row.name);
         	$('#detailPhysicalList').html('');
+        	$('#detailTreatmentList').html('');
         	for (var column in row) {
         		var val = row[column];
         		if (typeof val == 'object') {
@@ -325,6 +373,13 @@
         						phy.id);
 						}
         			}
+        			
+        			if (column == 'treatments') {
+						for (var i = 0, tre; tre = val[i]; i ++) {
+							renderDetailTreatment(tre ? tre.summary : '', tre ? tre.conclusion : '', tre ? tre.treatment : '', 
+									tre ? tre.address : '', tre ? tre.tel : '', tre ? tre.treatmentDoctor : '', tre.id);
+						}
+        			}
         		} else {
         			val = $.trim(val);
         			$('#detail_' + column).text(val || '暂无');
@@ -332,7 +387,20 @@
         	}
         	if (!row['physicals'] || !row['physicals'].length)
         		$('#detailPhysicalList').html('<li>暂无</li>');
+        	if (!row['treatments'] || !row['treatments'].length)
+        		$('#"detailTreatmentList"').html('<li>暂无</li>');
         }
+	}
+	/** 查看主检报告详情. */
+	function doDetailTreatment(row) {
+		row = $(row);
+		$('#treatment-detail').dialog('open').dialog('setTitle', row.data('name') || '检查项详情');
+		$('#detail_treatment_summary').html(row.data('summary'));
+		$('#detail_treatment_conclusion').html(row.data('conclusion'));
+		$('#detail_treatment_treatment').html(row.data('treatment'));
+		$('#detail_treatment_address').html(row.data('address'));
+		$('#detail_treatment_tel').html(row.data('tel'));
+		$('#detail_treatment_treatmentDoctor').html(row.data('doctor'));
 	}
 	/** 查看检查项详情. */
 	function doDetailPhysical(row) {
@@ -355,12 +423,6 @@
 		$('#detail_physical_result').html(row.data('result'));
 		$('#detail_physical_reference').html(row.data('reference'));
 		$('#detail_physical_doctor').html(row.data('doctor'));
-		$('#detail_physical_summary').html(row.data('summary'));
-		$('#detail_physical_conclusion').html(row.data('conclusion'));
-		$('#detail_physical_treatment').html(row.data('treatment'));
-		$('#detail_physical_address').html(row.data('address'));
-		$('#detail_physical_tel').html(row.data('tel'));
-		$('#detail_physical_treatmentDoctor').html(row.data('treatmentdoctor'));
 	}
 	/** 保存卡信息 */
 	function doHealthSave() {
@@ -368,7 +430,7 @@
             url: saveUrl,
             dataType: 'text',
             onSubmit: function() {
-            	var val = [], physicalIpt = $('#physicalIpt');
+            	var val = [], physicalIpt = $('#physicalIpt'), treatmentIpt = $('#treatmentIpt');
             	$('#physicalList li').each(function () {
             		var liVal = [], $this = $(this);
             		liVal.push($this.data('name'));
@@ -376,16 +438,24 @@
             		liVal.push($this.data('result'));
             		liVal.push($this.data('reference'));
             		liVal.push($this.data('doctor'));
-            		liVal.push($this.data('summary'));
-            		liVal.push($this.data('conclusion'));
-            		liVal.push($this.data('treatment'));
-            		liVal.push($this.data('address'));
-           			liVal.push($this.data('tel'));
-         			liVal.push($this.data('treatmentdoctor'));
    					liVal.push($this.data('physicalid'));
    					val.push(liVal.join('#,#'));
             	});
             	physicalIpt.val(val.join('#S#'));
+            	
+            	val = [];
+            	$('#treatmentList li').each(function () {
+            		var liVal = [], $this = $(this);
+            		liVal.push($this.data('summary'));
+            		liVal.push($this.data('conclusion'));
+            		liVal.push($this.data('treatment'));
+            		liVal.push($this.data('address'));
+            		liVal.push($this.data('tel'));
+            		liVal.push($this.data('doctor'));
+            		liVal.push($this.data('id'));
+   					val.push(liVal.join('#,#'));
+            	});
+            	treatmentIpt.val(val.join('#S#'));
                 return $(this).form('validate');  
             },  
             success: function(result){  
@@ -402,6 +472,17 @@
             }  
         });  
 	}
+	/** 保存主检报告. */
+	function doTreatmentSave() {
+		var newTreatment = $('#treatmentForm').serialize();
+		if (newTreatment.length > 62) {
+			var arr = newTreatment.split('&'), arrVal = [];
+			for (var i = 0, str; str = arr[i]; i ++)
+				arrVal.push(decodeURIComponent(str.split('=')[1]));
+			renderTreatment(arrVal[0], arrVal[1], arrVal[2], arrVal[3], arrVal[4], arrVal[5], null);
+			$('#treatment-dlg').dialog('close');
+		}
+	}
 	/** 保存检查项信息. */
 	function doPhysicalSave() {
 		var infos = [];
@@ -412,57 +493,75 @@
 		});
 		$('#physicalInfoIpt').val(infos.join('#T#'));
 		var newPhysical = $('#physicalForm').serialize();
-		if (newPhysical.length > 104) {
+		if (newPhysical.length > 41) {
 			var arr = newPhysical.split('&'), arrVal = [];
 			for (var i = 0, str; str = arr[i]; i ++)
 				arrVal.push(decodeURIComponent(str.split('=')[1]));
-			renderPhysical(arrVal[0], arrVal[1], arrVal[2], arrVal[3], arrVal[4], arrVal[5], 
-				arrVal[6], arrVal[7], arrVal[8], arrVal[9], arrVal[10], null);
+			renderPhysical(arrVal[0], arrVal[1], arrVal[2], arrVal[3], arrVal[4], null);
 			$('#physical-dlg').dialog('close');
 		}
 	}
+	/** 渲染主检报告信息. */
+	function renderTreatment(summary, conclusion, treatment, address, tel, doctor, id) {
+		var list = $('#treatmentList'), 
+			newItem = _renderTreatment(summary, conclusion, treatment, address, tel, doctor, id);
+		newItem.push(summary);
+		newItem.push('<a href="javascript:void(0)" onclick="removeItem(this.parentNode)" title="删除">X</a>');
+		newItem.push('</li>');
+		list.append(newItem.join(''));
+	}
 	/** 渲染检查项信息. */
-	function renderPhysical(name, content, result, reference, doctor, summary, conclusion, 
-			treatment, address, tel, treatmentDoctor, id) {
+	function renderPhysical(name, content, result, reference, doctor, id) {
 		var list = $('#physicalList'), newItem = _renderPhysical(
-				name, content, result, reference, doctor, summary, conclusion, 
-				treatment, address, tel, treatmentDoctor, id);
+				name, content, result, reference, doctor, id);
 		newItem.push(name);
-		newItem.push('<a href="javascript:void(0)" onclick="removePhysical(this.parentNode)" title="删除">X</a>');
+		newItem.push('<a href="javascript:void(0)" onclick="removeItem(this.parentNode)" title="删除">X</a>');
+		newItem.push('</li>');
+		list.append(newItem.join(''));
+	}
+	/** 渲染一个主检报告详情 */
+	function renderDetailTreatment(summary, conclusion, treatment, address, tel, doctor, id) {
+		var list = $('#detailTreatmentList'), newItem = _renderTreatment(
+				summary, conclusion, treatment, address, tel, doctor, id);
+		newItem.push(summary);
+		newItem.push('<a href="javascript:void(0)" onclick="doDetailTreatment(this.parentNode)" title="删除">查看</a>');
 		newItem.push('</li>');
 		list.append(newItem.join(''));
 	}
 	/** 渲染一个检查项详情 */
-	function renderDetailPhysical(name, content, result, reference, doctor, summary, conclusion, 
-			treatment, address, tel, treatmentDoctor, id) {
+	function renderDetailPhysical(name, content, result, reference, doctor, id) {
 		var list = $('#detailPhysicalList'), newItem = _renderPhysical(
-				name, content, result, reference, doctor, summary, conclusion, 
-				treatment, address, tel, treatmentDoctor, id);
+				name, content, result, reference, doctor, id);
 		newItem.push(name);
-		newItem.push('<a href="javascript:void(0)" onclick="doDetailPhysical(this.parentNode)" title="删除">查看</a>');
+		newItem.push('<a href="javascript:void(0)" onclick="doDetailPhysical(this.parentNode)" title="查看">查看</a>');
 		newItem.push('</li>');
 		list.append(newItem.join(''));
 	}
 	/** 初始化一个检查项数据 */
-	function _renderPhysical(name, content, result, reference, doctor, summary, conclusion, 
-			treatment, address, tel, treatmentDoctor, id) {
+	function _renderPhysical(name, content, result, reference, doctor, id) {
 		return ['<li ',
              '" data-name="', name,
              '" data-content="', content,
              '" data-result="', result,
              '" data-reference="', reference,
              '" data-doctor="', doctor,
-             '" data-summary="', summary,
-             '" data-conclusion="', conclusion,
-             '" data-treatment="', treatment,
-             '" data-address="', address,
-             '" data-tel="', tel,
-             '" data-treatmentdoctor="', treatmentDoctor,
              '" data-physicalid="', id,
              '">'];
 	}
+	/** 渲染一个主检报告的数据. */
+	function _renderTreatment(summary, conclusion, treatment, address, tel, doctor, id) {
+		return ['<li ',
+	             '" data-summary="', summary,
+	             '" data-conclusion="', conclusion,
+	             '" data-treatment="', treatment,
+	             '" data-address="', address,
+	             '" data-tel="', tel,
+	             '" data-doctor="', doctor,
+	             '" data-treatmentid="', id,
+	             '">'];
+	}
 	/** 删除检查项 */
-	function removePhysical(elem) {
+	function removeItem(elem) {
 		$(elem).remove();
 	}
 	/** 添加检查项 */
@@ -481,13 +580,14 @@
 	function addPhysicalInfo() {
 		var list = $('#physicalInfoList'), newItem = ['<li>'];
 		newItem.push('详情：<input type="text" value="" class="phyInfoIpt" />');
-		newItem.push('<a href="javascript:void(0)" onclick="removePhysicalInfo(this.parentNode)" title="删除">X</a>');
+		newItem.push('<a href="javascript:void(0)" onclick="removeItem(this.parentNode)" title="删除">X</a>');
 		newItem.push('</li>');
 		list.append(newItem.join(''));
 	}
-	/** 删除检查项详情 */
-	function removePhysicalInfo(li) {
-		$(li).remove();
+	/** 添加主检报告. */
+	function addTreatment() {
+		$('#treatment-dlg').dialog('open').dialog('setTitle', "添加主检报告");  
+        $('#treatmentForm').form('clear');
 	}
 	/** 导出报表. */
 	function doReport(elem) {
@@ -506,16 +606,16 @@
     }
 </script>
 <style>
-	#physicalList { list-style: none; }
-	#physicalList li a { color: #F33; float: right; margin: 0 4px 0 0px; }
+	#treatmentList, #physicalList { list-style: none; }
+	#treatmentList li a, #physicalList li a { color: #F33; float: right; margin: 0 4px 0 0px; }
 	
 	#physicalInfoList { list-style: none; }
 	#physicalInfoList li a { color: #F33; float: right; margin: 0 4px 0 0px; }
 	
-	#detailPhysicalList, #detailPhysicalInfoList { list-style: none; }
-	#detailPhysicalList li { padding: 4px 12px 4px 16px; }
+	#detailTreatmentList, #detailPhysicalList, #detailPhysicalInfoList { list-style: none; }
+	#detailTreatmentList li, #detailPhysicalList li { padding: 4px 12px 4px 16px; }
 	#detailPhysicalInfoList li { padding: 4px 16px 4px 22px; }
-	#detailPhysicalList li a { color: #33F; float: right; margin: 0 4px 0 0px; }
+	#detailTreatmentList li a, #detailPhysicalList li a { color: #33F; float: right; margin: 0 4px 0 0px; }
 	
 	.add-phy-info { margin-top: 4px; }
 	.phyInfoIpt { width: 220px; margin-bottom: 4px;}
