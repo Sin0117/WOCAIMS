@@ -25,9 +25,6 @@ public class Physical extends Model {
 	// 检查结果
 	@Reference(ignoreMissing = true)
 	public PhysicalResult results;
-	// 治疗建议
-	@Reference(ignoreMissing = true)
-	public PhysicalTreatment treatment;
 	// 创建时间
 	public Date createAt;
 	// 修改时间
@@ -47,8 +44,6 @@ public class Physical extends Model {
 		}
 		if (results != null)
 			result.put("result", results.serialize());
-		if (treatment != null)
-			result.put("treatment", treatment.serialize());
 		result.put("createAt", utils.Utils.formatDate(this.createAt));
 		result.put("modifyAt", utils.Utils.formatDate(this.modifyAt));
 		return result;

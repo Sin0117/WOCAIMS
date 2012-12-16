@@ -1,15 +1,12 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import play.modules.morphia.Model.MorphiaQuery;
-import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Util;
-
-import com.google.code.morphia.Key;
 
 public class Secure extends Controller {
 	
@@ -47,6 +44,8 @@ public class Secure extends Controller {
 		models.Administrator admin = getAdmin(name, password);
 		if (admin != null) {
 			session.put("admin", admin.getId());
+			admin.lastLoginAt = new Date();
+			admin.save();
 			redirect("/");
 		} else {
 			String error = "管理员名称或者密码错误！";

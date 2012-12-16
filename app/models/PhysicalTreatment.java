@@ -15,8 +15,8 @@ public class PhysicalTreatment extends Model {
 	@Reference(ignoreMissing = false)
 	public HealthArchives health;
 	// 所属检查项
-	@Reference(ignoreMissing = false)
-	public Physical physical;
+	// @Reference(ignoreMissing = false)
+	// public Physical physical;
 	// 单位
 	@Reference(ignoreMissing = false)
 	public Department department;
@@ -42,7 +42,7 @@ public class PhysicalTreatment extends Model {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("id", this.getId().toString());
 		result.put("health", this.health.getId());
-		result.put("physical", this.physical.getId());
+		// result.put("physical", this.physical.getId());
 		result.put("summary", this.summary);
 		result.put("conclusion", this.conclusion);
 		result.put("treatment", this.treatment);

@@ -29,6 +29,7 @@ public class HealthArchives extends Controller {
 	
 	/** 导出excel. */
 	public static void report(String keyword, String department, String id) {
+		/*
 		String fileName = "健康档案-" + Secure.getAdmin().department.name + ".xls";
 		File f = new File("./excels/" + fileName);
 		models.HealthArchives data = models.HealthArchives.findById(id);
@@ -37,7 +38,7 @@ public class HealthArchives extends Controller {
 	    		f.createNewFile();
 	    	int index = 0;
 	        WritableWorkbook wbook = Workbook.createWorkbook(f);
-	        WritableSheet ws = wbook.createSheet("体检报告", index);
+	        WritableSheet ws = wbook.createSheet("体检报告", index++);
 	        Label label0_0 = new Label(0, 0, "单位");
 	        ws.addCell(label0_0);
 	        Label field0_0 = new Label(1, 0, data.department.name);
@@ -99,7 +100,7 @@ public class HealthArchives extends Controller {
 	        ws.addCell(field6_0);
 	        
 	        for (models.Physical physical : data.physicals) {
-	        	WritableSheet wsp = wbook.createSheet("检查项-" + physical.name, index);
+	        	WritableSheet wsp = wbook.createSheet("检查项-" + physical.name, index++);
 	        	int contentIndex = 0;
 	        	Label plabel0_0 = new Label(0, contentIndex, "检查项");
 	        	wsp.addCell(plabel0_0);
@@ -134,46 +135,50 @@ public class HealthArchives extends Controller {
 			        wsp.addCell(pfield3_2);
 			        contentIndex ++;
 		        }
-		        
-		        if (physical.treatment != null) {
+	        }
+	        
+	        if (data.treatments != null) {
+	        	WritableSheet wsp = wbook.createSheet("结果汇总及治疗意见", index++);
+	        	int contentIndex = 0;
+	        	for (models.PhysicalTreatment treatment : data.treatments) {
 			        Label plabel4_0 = new Label(0, contentIndex, "检查异常结果汇总");
 			        wsp.addCell(plabel4_0);
-			        Label pfield4_0 = new Label(1, contentIndex, physical.treatment.summary);
+			        Label pfield4_0 = new Label(1, contentIndex, treatment.summary);
 			        wsp.addCell(pfield4_0);
 			        contentIndex ++;
 			        Label plabel4_1 = new Label(0, contentIndex, "结论");
 			        wsp.addCell(plabel4_1);
-			        Label pfield4_1 = new Label(1, contentIndex, physical.treatment.conclusion);
+			        Label pfield4_1 = new Label(1, contentIndex, treatment.conclusion);
 			        wsp.addCell(pfield4_1);
 			        contentIndex ++;
 			        Label plabel4_2 = new Label(0, contentIndex, "治疗意见或建议");
 			        wsp.addCell(plabel4_2);
-			        Label pfield4_2 = new Label(1, contentIndex, physical.treatment.treatment);
+			        Label pfield4_2 = new Label(1, contentIndex, treatment.treatment);
 			        wsp.addCell(pfield4_2);
 			        contentIndex ++;
 			        Label plabel4_3 = new Label(0, contentIndex, "健康咨询地址");
 			        wsp.addCell(plabel4_3);
-			        Label pfield4_3 = new Label(1, contentIndex, physical.treatment.address);
+			        Label pfield4_3 = new Label(1, contentIndex, treatment.address);
 			        wsp.addCell(pfield4_3);
 			        contentIndex ++;
 			        Label plabel4_4 = new Label(0, contentIndex, "咨询电话");
 			        wsp.addCell(plabel4_4);
-			        Label pfield4_4 = new Label(1, contentIndex, physical.treatment.tel);
+			        Label pfield4_4 = new Label(1, contentIndex, treatment.tel);
 			        wsp.addCell(pfield4_4);
 			        Label plabel4_5 = new Label(2, contentIndex, "主检医生");
 			        wsp.addCell(plabel4_5);
-			        Label pfield4_5 = new Label(3, contentIndex, physical.treatment.treatmentDoctor);
+			        Label pfield4_5 = new Label(3, contentIndex, treatment.treatmentDoctor);
 			        wsp.addCell(pfield4_5);
-		        }
+	        	}
 	        }
 	        wbook.write();
 	        wbook.close();
 	        renderBinary(f, fileName);
 	    } catch (Exception exception) {  
-	        // TODO Auto-generated catch block  
 	    	exception.printStackTrace();
 	    	error(exception);
 	    }
+	    */
 	}
 	
 	/** 获取数据列表. */
@@ -238,7 +243,7 @@ public class HealthArchives extends Controller {
 	/** 添加操作 */
 	public static void add(String name, String code, String gender, int age,
 			String home, String dealthAddress, String history, String department, String tel,
-			String dealthDate, String reportDate, String physicals) {
+			String dealthDate, String reportDate, String physicals, String treatments) {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
@@ -272,8 +277,8 @@ public class HealthArchives extends Controller {
 				List<String> physicalArr = Utils.toStringArray(physicals, "#S#");
 				List<models.Physical> childrenList = new ArrayList<models.Physical>();
 				for (int i = 0; i < physicalArr.size(); i ++) {
-					// data format: name,content,result,reference,doctor,summary,conclusion,treatment,address,tel,treatmentDoctor,id|... 
-					String[] contentAt = physicalArr.get(i).split("#,#", 12);
+					// data format: name,content,result,reference,doctor,id|... 
+					String[] contentAt = physicalArr.get(i).split("#,#", 6);
 					models.Physical newPhy = new models.Physical();
 					if (contentAt.length > 0)
 						newPhy.name = contentAt[0];
@@ -315,40 +320,41 @@ public class HealthArchives extends Controller {
 						newResult = newResult.save();
 						newPhy.results = newResult;
 					}
-					// 结论以及建议
-					if ((contentAt.length > 5 && Utils.checkString(contentAt[5]))
-							|| (contentAt.length > 6 && Utils.checkString(contentAt[6]))
-							|| (contentAt.length > 7 && Utils.checkString(contentAt[7]))
-							|| (contentAt.length > 8 && Utils.checkString(contentAt[8]))
-							|| (contentAt.length > 9 && Utils.checkString(contentAt[9]))
-							|| (contentAt.length > 10 && Utils.checkString(contentAt[10]))) {
-						models.PhysicalTreatment newTra = new models.PhysicalTreatment();
-						if (contentAt.length > 5)
-							newTra.summary = contentAt[5];
-						if (contentAt.length > 6)
-							newTra.conclusion = contentAt[6];
-						if (contentAt.length > 7)
-							newTra.treatment = contentAt[7];
-						if (contentAt.length > 8)
-							newTra.address = contentAt[8];
-						if (contentAt.length > 9)
-							newTra.tel = contentAt[9];
-						if (contentAt.length > 10)
-							newTra.treatmentDoctor = contentAt[10];
-						newTra.department = curDep;
-						newTra.createAt = newDate;
-						newTra.modifyAt = newDate;
-						newTra.physical = newPhy;
-						newTra.health = newData;
-						newTra = newTra.save();
-						newPhy.treatment = newTra;
-					}
 					newPhy = newPhy.save();
 					childrenList.add(newPhy);
 				}
 				newData.physicals = childrenList;
-				newData.save();
 			}
+			
+			if (Utils.checkString(treatments)) {
+				// summary,conclusion,treatment,address,tel,treatmentDoctor,id#S#...
+				List<models.PhysicalTreatment> treatmentList = new ArrayList<models.PhysicalTreatment>();
+				List<String> treatmentStr = Utils.toStringArray(treatments, "#S#");
+				for (int i = 0; i < treatmentStr.size(); i ++) {
+					String[] contentAt = treatmentStr.get(i).split("#,#", 7);
+					models.PhysicalTreatment newTra = new models.PhysicalTreatment();
+					if (contentAt.length > 5)
+						newTra.summary = contentAt[5];
+					if (contentAt.length > 6)
+						newTra.conclusion = contentAt[6];
+					if (contentAt.length > 7)
+						newTra.treatment = contentAt[7];
+					if (contentAt.length > 8)
+						newTra.address = contentAt[8];
+					if (contentAt.length > 9)
+						newTra.tel = contentAt[9];
+					if (contentAt.length > 10)
+						newTra.treatmentDoctor = contentAt[10];
+					newTra.department = curDep;
+					newTra.createAt = newDate;
+					newTra.modifyAt = newDate;
+					newTra.health = newData;
+					newTra = newTra.save();
+					treatmentList.add(newTra);
+				}
+				newData.treatments = treatmentList;
+			}
+			newData.save();
 		}
 		renderText(JSON.serialize(result));
 	}
@@ -368,7 +374,7 @@ public class HealthArchives extends Controller {
 	/** 修改操作 */
 	public static void update(String id, String name, String code, String gender, int age,
 			String home, String dealthAddress, String history, String department, String tel,
-			String dealthDate, String reportDate, String physicals) {
+			String dealthDate, String reportDate, String physicals, String treatments) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
@@ -395,11 +401,11 @@ public class HealthArchives extends Controller {
 				List<String> physicalArr = Utils.toStringArray(physicals, "#S#");
 				List<models.Physical> childrenList = new ArrayList<models.Physical>();
 				for (int i = 0; i < physicalArr.size(); i ++) {
-					// data format: name,content,result,reference,doctor,summary,conclusion,treatment,address,tel,treatmentDoctor,id|... 
-					String[] contentAt = physicalArr.get(i).split("#,#", 12);
+					// data format: name,content,result,reference,doctor,id#S#... 
+					String[] contentAt = physicalArr.get(i).split("#,#", 6);
 					models.Physical newPhy = null;
-					if (contentAt.length > 11 && Utils.checkString(contentAt[11])) {
-						newPhy = models.Physical.findById(contentAt[11]);
+					if (contentAt.length > 5 && Utils.checkString(contentAt[5])) {
+						newPhy = models.Physical.findById(contentAt[5]);
 					} else {
 						newPhy = new models.Physical();
 						newPhy.createAt = modifyDate;
@@ -455,39 +461,6 @@ public class HealthArchives extends Controller {
 						newResult = newResult.save();
 						newPhy.results = newResult;
 					}
-					// 结论以及建议
-					if ((contentAt.length > 5 && Utils.checkString(contentAt[5]))
-							|| (contentAt.length > 6 && Utils.checkString(contentAt[6]))
-							|| (contentAt.length > 7 && Utils.checkString(contentAt[7]))
-							|| (contentAt.length > 8 && Utils.checkString(contentAt[8]))
-							|| (contentAt.length > 9 && Utils.checkString(contentAt[9]))
-							|| (contentAt.length > 10 && Utils.checkString(contentAt[10]))) {
-						models.PhysicalTreatment newTra = null;
-						if (newPhy.treatment != null) {
-							newTra = newPhy.treatment;
-						} else {
-							newTra = new models.PhysicalTreatment();
-							newTra.createAt = modifyDate;
-						}
-						if (contentAt.length > 5)
-							newTra.summary = contentAt[5];
-						if (contentAt.length > 6)
-							newTra.conclusion = contentAt[6];
-						if (contentAt.length > 7)
-							newTra.treatment = contentAt[7];
-						if (contentAt.length > 8)
-							newTra.address = contentAt[8];
-						if (contentAt.length > 9)
-							newTra.tel = contentAt[9];
-						if (contentAt.length > 10)
-							newTra.treatmentDoctor = contentAt[10];
-						newTra.department = curDep;
-						newTra.modifyAt = modifyDate;
-						newTra.physical = newPhy;
-						newTra.health = cur;
-						newTra = newTra.save();
-						newPhy.treatment = newTra;
-					}
 					newPhy = newPhy.save();
 					childrenList.add(newPhy);
 				}
@@ -498,6 +471,46 @@ public class HealthArchives extends Controller {
 						phy.delete();
 				}
 				cur.physicals = null;
+			}
+			
+			if (Utils.checkString(treatments)) {
+				// summary,conclusion,treatment,address,tel,treatmentDoctor,id#S#...
+				List<models.PhysicalTreatment> treatmentList = new ArrayList<models.PhysicalTreatment>();
+				List<String> treatmentStr = Utils.toStringArray(treatments, "#S#");
+				for (int i = 0; i < treatmentStr.size(); i ++) {
+					String[] contentAt = treatmentStr.get(i).split("#,#", 7);
+					models.PhysicalTreatment newTra = null;
+					if (contentAt.length > 6 && Utils.checkString(contentAt[6])) {
+						newTra = models.PhysicalTreatment.findById(contentAt[6]);
+					} else {
+						newTra = new models.PhysicalTreatment();
+						newTra.createAt = modifyDate;
+					}
+					if (contentAt.length > 0)
+						newTra.summary = contentAt[0];
+					if (contentAt.length > 1)
+						newTra.conclusion = contentAt[1];
+					if (contentAt.length > 2)
+						newTra.treatment = contentAt[2];
+					if (contentAt.length > 3)
+						newTra.address = contentAt[3];
+					if (contentAt.length > 4)
+						newTra.tel = contentAt[4];
+					if (contentAt.length > 5)
+						newTra.treatmentDoctor = contentAt[5];
+					newTra.department = curDep;
+					newTra.modifyAt = modifyDate;
+					newTra.health = cur;
+					newTra = newTra.save();
+					treatmentList.add(newTra);
+				}
+				cur.treatments = treatmentList;
+			} else {
+				if (cur.treatments != null) {
+					for (models.PhysicalTreatment trea: cur.treatments)
+						trea.delete();
+				}
+				cur.treatments = null;
 			}
 			cur.save();
 			result.put("success", true);
