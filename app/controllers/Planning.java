@@ -53,7 +53,7 @@ public class Planning extends Controller {
 			}
 		}
 
-		String fileName = "人口和计划生育工作随访服务记录-" + Secure.getAdmin().department.name + ".xls";	
+		String fileName = "计划生育基本情况表-" + Secure.getAdmin().department.name + ".xls";	
 		File f = new File("./excels/" + fileName);
 		try {
 			if (f.exists())

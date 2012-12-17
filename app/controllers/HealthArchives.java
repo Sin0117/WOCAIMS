@@ -252,7 +252,7 @@ public class HealthArchives extends Controller {
 		
 		models.HealthArchives existHealth = isExist(code, department, null);
 		if (existHealth != null) {
-			result.put("error", "人员添加失败，" + existHealth.name + "(" + existHealth.code + ")已经存在！");
+			result.put("error", "档案添加失败，" + existHealth.name + "(" + existHealth.code + ")已经存在！");
 		} else {
 			models.HealthArchives newData = new models.HealthArchives();
 			Date newDate = new Date();

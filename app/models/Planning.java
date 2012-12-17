@@ -15,35 +15,115 @@ public class Planning extends Model {
 	// 所属部门
 	@Reference(ignoreMissing = false)
 	public Department department;
-	// 随访职工姓名
-	public String name;
-	// 随访事由
-	public String reason;
-	// 随访内容
-	public String content;
-	// 随访日期
-	public Date date;
-	// 随访人员
-	public String staff;
+	// 年初人口数
+	public int beginPopulation;
+	// 年末人口数
+	public int endPopulation;
+	// 男职工数
+	public int maleWorker;
+	// 女职工数
+	public int femaleWorker;
+	// 育龄妇女数
+	public int childBearingAge;
+	// 已婚育龄妇女数
+	public int marriedChildBearingAge;
+	// 已婚未育妇女数
+	public int marriedNotBrood;
+	// 一孩妇女数
+	public int childWomens;
+	// 环扎数
+	public int cerclage;
+	// 环扎率
+	public float cerclageRate;
+	// 领独生子女证人数
+	public int childCard;
+	// 二孩及以上妇女数
+	public int childrenWomens;
+	// 放环数
+	public int putRing;
+	// 放环率
+	public float putRingRate;
+	// 结扎数
+	public int ligation;
+	// 结扎率
+	public float ligationRate;
+	// 出生总数
+	public int bornTotal; 
+	// 一孩
+	public int child;
+	// 二孩
+	public int children;
+	// 女性初婚
+	public int womenFirstMarriage;
+	// 23岁以上女性人数
+	public int womens23years;
+	// 男性初婚
+	public int menFirstMarriage;
+	// 25岁以上男性人数
+	public int men25years;
+	// 期末选用各种避孕人数
+	public int finalSelection;
+	// 男扎
+	public int finalMaleFirm;
+	// 女扎
+	public int finalFemaleFirm;
+	// 放环
+	public int finalPutRing;
+	// 皮埋
+	public int finalSkinBuried;
+	// 用套
+	public int finalCondoms;
+	// 外用
+	public int finalExternal;
+	// 其他
+	public int finalOther;
+	// 现孕
+	public int now;
+	// 一孩
+	public int nowChild;
+	// 二孩
+	public int nowChildren;
+	// 生在今年
+	public int bornThisYear;
+	// 生在下年
+	public int bornNextYear;
+	// 本期施行计划生育手术例数
+	public int operation;
+	// 男扎
+	public int operationMaleFirm;
+	// 女扎
+	public int operationFemaleFirm;
+	// 放环
+	public int operationPutRing;
+	// 取环
+	public int operationTakeRing;
+	// 人工流产
+	public int operationAbortion;
+	// 引产
+	public int operationInduced;
+	// 汉族独生子女领证率
+	public float nationality;
+	// 综合节育率
+	public float comprehensive; 
+	// 晚婚率
+	public float lastMarriage;
+	// 晚育率
+	public float lastPregnant;
+	// 单位负责人
+	public String charge;
+	// 填表人
+	public Administrator preparer;
 	// 创建时间
 	public Date createAt;
 	// 修改时间
 	public Date modifyAt;
-	//备注
-	public String notes;	
 	
 	/** json序列化. */
 	public Map<String, Object> serialize() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("id", this.getId().toString());
-		result.put("name", this.name);
-		result.put("reason", this.reason);
-		result.put("content", this.content);
-		result.put("staff", this.staff);
-		result.put("notes", this.notes);
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");
-		result.put("date", this.date == null ? "" : utils.Utils.formatDate(this.date));
 		result.put("createAt", utils.Utils.formatDate(this.createAt));
 		result.put("modifyAt", utils.Utils.formatDate(this.modifyAt));
 		return result;
