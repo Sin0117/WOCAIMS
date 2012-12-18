@@ -243,7 +243,8 @@ public class HealthArchives extends Controller {
 	/** 添加操作 */
 	public static void add(String name, String code, String gender, int age,
 			String home, String dealthAddress, String history, String department, String tel,
-			String dealthDate, String reportDate, String physicals, String treatments) {
+			String dealthDate, String reportDate, String physicals, 
+			String summary, String conclusion, String treatment, String address, String phone, String doctor) {
 		Map<String, String> result = new HashMap<String, String>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
@@ -290,19 +291,15 @@ public class HealthArchives extends Controller {
 					// 添加检查项内容
 					if (contentAt.length > 1 && Utils.checkString(contentAt[1])) {
 						List<models.PhysicalInfo> infoList = new ArrayList<models.PhysicalInfo>();
-						// content,result,reference,doctor,id
 						List<String> infoArr = Utils.toStringArray(contentAt[1], "#T#");
+						// content,result,reference,doctor,id
 						for (int j = 0; j < infoArr.size(); j ++) {
 							String[] info = infoArr.get(j).split("#E#", 5);
 							models.PhysicalInfo newInfo = new models.PhysicalInfo();
-							if (contentAt.length > 0)
-								newInfo.content = info[0];
-							if (contentAt.length > 1)
-								newInfo.result = info[0];
-							if (contentAt.length > 2)
-								newInfo.reference = info[0];
-							if (contentAt.length > 3)
-								newInfo.doctor = info[0];
+							newInfo.content = info[0];
+							newInfo.result = info[1];
+							newInfo.reference = info[2];
+							newInfo.doctor1 = info[3];
 							newInfo.physical = newPhy;
 							newInfo.health = newData;
 							newInfo.department = curDep;
@@ -319,33 +316,22 @@ public class HealthArchives extends Controller {
 				newData.physicals = childrenList;
 			}
 			
-			if (Utils.checkString(treatments)) {
-				// summary,conclusion,treatment,address,tel,treatmentDoctor,id#S#...
-				List<models.PhysicalTreatment> treatmentList = new ArrayList<models.PhysicalTreatment>();
-				List<String> treatmentStr = Utils.toStringArray(treatments, "#S#");
-				for (int i = 0; i < treatmentStr.size(); i ++) {
-					String[] contentAt = treatmentStr.get(i).split("#,#", 7);
-					models.PhysicalTreatment newTra = new models.PhysicalTreatment();
-					if (contentAt.length > 0)
-						newTra.summary = contentAt[0];
-					if (contentAt.length > 1)
-						newTra.conclusion = contentAt[1];
-					if (contentAt.length > 2)
-						newTra.treatment = contentAt[2];
-					if (contentAt.length > 3)
-						newTra.address = contentAt[3];
-					if (contentAt.length > 4)
-						newTra.tel = contentAt[4];
-					if (contentAt.length > 5)
-						newTra.treatmentDoctor = contentAt[5];
-					newTra.department = curDep;
-					newTra.createAt = newDate;
-					newTra.modifyAt = newDate;
-					newTra.health = newData;
-					newTra = newTra.save();
-					treatmentList.add(newTra);
-				}
-				newData.treatments = treatmentList;
+			if (Utils.checkString(summary) || Utils.checkString(conclusion) ||
+					Utils.checkString(treatment) || Utils.checkString(address) ||
+					Utils.checkString(phone) || Utils.checkString(doctor)) {
+				models.PhysicalTreatment newTra = new models.PhysicalTreatment();
+				newTra.summary = summary;
+				newTra.conclusion = conclusion;
+				newTra.treatment = treatment;
+				newTra.address = address;
+				newTra.phone = phone;
+				newTra.treatmentDoctor = doctor;
+				newTra.department = curDep;
+				newTra.createAt = newDate;
+				newTra.modifyAt = newDate;
+				newTra.health = newData;
+				newTra = newTra.save();
+				newData.treatments = newTra;
 			}
 			newData.save();
 		}
@@ -367,7 +353,8 @@ public class HealthArchives extends Controller {
 	/** 修改操作 */
 	public static void update(String id, String name, String code, String gender, int age,
 			String home, String dealthAddress, String history, String department, String tel,
-			String dealthDate, String reportDate, String physicals, String treatments) {
+			String dealthDate, String reportDate, String physicals, 
+			String summary, String conclusion, String treatment, String address, String phone, String doctor) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (department == null || "".equals(department)) {
 			result.put("error", "记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
@@ -391,14 +378,14 @@ public class HealthArchives extends Controller {
 			cur.department = curDep;
 			
 			if (physicals != null && !"".equals(physicals)) {
+				// data format: name,content,id#S#... 
 				List<String> physicalArr = Utils.toStringArray(physicals, "#S#");
 				List<models.Physical> childrenList = new ArrayList<models.Physical>();
 				for (int i = 0; i < physicalArr.size(); i ++) {
-					// data format: name,content,result,reference,doctor,id#S#... 
-					String[] contentAt = physicalArr.get(i).split("#,#", 6);
+					String[] contentAt = physicalArr.get(i).split("#,#", 3);
 					models.Physical newPhy = null;
-					if (contentAt.length > 5 && Utils.checkString(contentAt[5])) {
-						newPhy = models.Physical.findById(contentAt[5]);
+					if (contentAt.length > 2 && Utils.checkString(contentAt[2])) {
+						newPhy = models.Physical.findById(contentAt[2]);
 					} else {
 						newPhy = new models.Physical();
 						newPhy.createAt = modifyDate;
@@ -430,14 +417,10 @@ public class HealthArchives extends Controller {
 								newInfo = new models.PhysicalInfo();
 								newInfo.createAt = modifyDate;
 							}
-							if (contentAt.length > 0)
-								newInfo.content = info[0];
-							if (contentAt.length > 1)
-								newInfo.result = info[0];
-							if (contentAt.length > 2)
-								newInfo.reference = info[0];
-							if (contentAt.length > 3)
-								newInfo.doctor = info[0];
+							newInfo.content = info[0];
+							newInfo.result = info[1];
+							newInfo.reference = info[2];
+							newInfo.doctor1 = info[3];
 							newInfo.physical = newPhy;
 							newInfo.health = cur;
 							newInfo.department = curDep;
@@ -458,43 +441,27 @@ public class HealthArchives extends Controller {
 				}
 				cur.physicals = null;
 			}
-			if (Utils.checkString(treatments)) {
-				// summary,conclusion,treatment,address,tel,treatmentDoctor,id#S#...
-				List<models.PhysicalTreatment> treatmentList = new ArrayList<models.PhysicalTreatment>();
-				List<String> treatmentStr = Utils.toStringArray(treatments, "#S#");
-				for (int i = 0; i < treatmentStr.size(); i ++) {
-					String[] contentAt = treatmentStr.get(i).split("#,#", 7);
-					models.PhysicalTreatment newTra = null;
-					if (contentAt.length > 6 && Utils.checkString(contentAt[6])) {
-						newTra = models.PhysicalTreatment.findById(contentAt[6]);
-					} else {
-						newTra = new models.PhysicalTreatment();
-						newTra.createAt = modifyDate;
-					}
-					if (contentAt.length > 0)
-						newTra.summary = contentAt[0];
-					if (contentAt.length > 1)
-						newTra.conclusion = contentAt[1];
-					if (contentAt.length > 2)
-						newTra.treatment = contentAt[2];
-					if (contentAt.length > 3)
-						newTra.address = contentAt[3];
-					if (contentAt.length > 4)
-						newTra.tel = contentAt[4];
-					if (contentAt.length > 5)
-						newTra.treatmentDoctor = contentAt[5];
-					newTra.department = curDep;
-					newTra.modifyAt = modifyDate;
-					newTra.health = cur;
-					newTra = newTra.save();
-					treatmentList.add(newTra);
+			if (Utils.checkString(summary) || Utils.checkString(conclusion) ||
+					Utils.checkString(treatment) || Utils.checkString(address) ||
+					Utils.checkString(phone) || Utils.checkString(doctor)) {
+				models.PhysicalTreatment newTra = cur.treatments;
+				if (newTra == null) {
+					newTra = new models.PhysicalTreatment();
+					newTra.createAt = modifyDate;
 				}
-				cur.treatments = treatmentList;
+				newTra.summary = summary;
+				newTra.conclusion = conclusion;
+				newTra.treatment = treatment;
+				newTra.address = address;
+				newTra.phone = phone;
+				newTra.treatmentDoctor = doctor;
+				newTra.department = curDep;
+				newTra.modifyAt = modifyDate;
+				newTra.health = cur;
+				newTra = newTra.save();
+				cur.treatments = newTra;
 			} else {
-				if (cur.treatments != null) {
-					for (models.PhysicalTreatment trea: cur.treatments)
-						trea.delete();
-				}
+				cur.treatments.delete();
 				cur.treatments = null;
 			}
 			cur.save();

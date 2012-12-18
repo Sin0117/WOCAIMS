@@ -29,7 +29,7 @@ public class PhysicalTreatment extends Model {
 	// 健康咨询地址
 	public String address;
 	// 咨询电话
-	public String tel;
+	public String phone;
 	// 主检医生
 	public String treatmentDoctor;
 	// 创建时间
@@ -47,8 +47,9 @@ public class PhysicalTreatment extends Model {
 		result.put("conclusion", this.conclusion);
 		result.put("treatment", this.treatment);
 		result.put("address", this.address);
-		result.put("tel", this.tel);
+		result.put("phone", this.phone);
 		result.put("treatmentDoctor", this.treatmentDoctor);
+		result.put("doctor", this.treatmentDoctor);
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");
 		result.put("createAt", utils.Utils.formatDate(this.createAt));

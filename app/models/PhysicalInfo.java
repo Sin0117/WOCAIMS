@@ -28,7 +28,7 @@ public class PhysicalInfo extends Model {
 	// 参考值
 	public String reference;
 	// 医生
-	public String doctor;
+	public String doctor1;
 	// 创建时间
 	public Date createAt;
 	// 修改时间
@@ -42,7 +42,7 @@ public class PhysicalInfo extends Model {
 		result.put("physical", this.physical.getId());
 		result.put("result", this.result);
 		result.put("reference", this.reference);
-		result.put("doctor", this.doctor);
+		result.put("doctor", this.doctor1);
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");
 		result.put("physical", this.physical.getId());

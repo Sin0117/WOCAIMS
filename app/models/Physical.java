@@ -38,6 +38,8 @@ public class Physical extends Model {
 			for (PhysicalInfo children : physicalInfo)
 				infoList.add(children.serialize());
 			result.put("physicalInfo", infoList);
+		} else {
+			result.put("physicalInfo", "");
 		}
 		result.put("createAt", utils.Utils.formatDate(this.createAt));
 		result.put("modifyAt", utils.Utils.formatDate(this.modifyAt));

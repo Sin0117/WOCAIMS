@@ -42,7 +42,8 @@ public class HealthArchives extends Model {
 	public List<Physical> physicals;
 	// 治疗建议
 	@Reference(ignoreMissing = true)
-	public List<PhysicalTreatment> treatments;
+	// public List<PhysicalTreatment> treatments;
+	public PhysicalTreatment treatments;
 	// 创建时间
 	public Date createAt;
 	// 修改时间
@@ -66,11 +67,22 @@ public class HealthArchives extends Model {
 				physicalList.add(children.serialize());
 			result.put("physicals", physicalList);
 		}
+		/*
 		List<Map<String, Object>> treatmentList = new ArrayList<Map<String, Object>>();
 		if (treatments != null && treatments.size() > 0) {
 			for (PhysicalTreatment treatment : treatments)
 				treatmentList.add(treatment.serialize());
 			result.put("treatments", treatmentList);
+		}
+		*/
+		result.put("treatments", this.treatments != null ? this.treatments.serialize() : "");
+		if (treatments != null) {
+			result.put("phone", this.treatments.phone);
+			result.put("address", this.treatments.address);
+			result.put("doctor", this.treatments.treatmentDoctor);
+			result.put("treatment", this.treatments.treatment);
+			result.put("conclusion", this.treatments.conclusion);
+			result.put("summary", this.treatments.summary);
 		}
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");
