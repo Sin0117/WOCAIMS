@@ -36,51 +36,25 @@ public class BirthOligogenics extends Controller {
 
 	/** 导出excel. */
 	public static void report(String keyword, String department) {
-		 String fileName = "出生及节育措施花名册-";
-		 List<models.BirthOligogenics> lists = null;
-		 if (Utils.checkString(department)) {
-			 models.Department dep = models.Department.findById(department);
-			 fileName += dep.name + ".xls";
-			 MorphiaQuery query = models.BirthOligogenics.find();
-			 if (keyword != null && !"".equals(keyword))
-				 query.or(query.criteria("birthStatus.man").contains(keyword),
-					 query.criteria("birthStatus.woman").contains(keyword),
-					 query.criteria("oligogenics.man").contains(keyword),
-					 query.criteria("oligogenics.woman").contains(keyword));
-			 query.filter("department", dep);
-			 lists = query.asList();
-			 department = dep.name;
-		 } else {
-			 department = Secure.getAdmin().department.name;
-			 fileName += department + ".xls";
-			 lists = findAll(keyword, 0, 0);
-		 }
-		 fileName += "出生及节育措施花名册-" + department + ".xls";
-		 /*
-		int rows = 100000;
-		int page = 1;
+		String fileName = "出生及节育措施花名册-";
 		List<models.BirthOligogenics> lists = null;
-		if (department == null || "".equals(department)) {
-			lists = findAll(keyword, page, rows);
-		} else {
+		if (Utils.checkString(department)) {
 			models.Department dep = models.Department.findById(department);
-			if (dep != null) {
-				MorphiaQuery query = models.BirthOligogenics.find();
-				if (keyword != null && !"".equals(keyword))
-					query.or(query.criteria("birthStatus.man")
-							.contains(keyword), query.criteria(
-							"birthStatus.woman").contains(keyword), query
-							.criteria("oligogenics.man").contains(keyword),
-							query.criteria("oligogenics.woman").contains(
-									keyword));
-				query.filter("department", dep);
-				lists = query.limit(rows).offset(page * rows - rows).asList();
-			} else {
-				lists = findAll(keyword, page, rows);
-			}
+			fileName += dep.name + ".xls";
+			MorphiaQuery query = models.BirthOligogenics.find();
+			if (keyword != null && !"".equals(keyword))
+				query.or(query.criteria("birthStatus.man").contains(keyword),
+					query.criteria("birthStatus.woman").contains(keyword),
+					query.criteria("oligogenics.man").contains(keyword),
+					query.criteria("oligogenics.woman").contains(keyword));
+			query.filter("department", dep);
+			lists = query.asList();
+			department = dep.name;
+		} else {
+			department = Secure.getAdmin().department.name;
+			fileName += department + ".xls";
+			lists = findAll(keyword, 0, 0);
 		}
-		String fileName = "出生及节育措施花名册-" + Secure.getAdmin().department.name + ".xls";
-		  */
 		File f = new File("./excels/" + fileName);
 		try {
 			if (f.exists())
