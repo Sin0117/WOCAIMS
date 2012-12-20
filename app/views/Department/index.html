@@ -32,10 +32,6 @@
 	            <label>部门名称:</label>  
 	            <input name="name" class="easyui-validatebox" required="true">  
 	        </div>  
-	        <div class="fitem">  
-	            <label>部门编号:</label>  
-	            <input name="code" class="easyui-validatebox" required="true">  
-	        </div>  
 	        <div class="fitem">
 	            <label>部门类型:</label>
 	            <label class="rd"><input name="type" type="radio" value="DIVISION">处级</label>
@@ -44,7 +40,7 @@
 	        <div class="fitem">  
 	            <label>上级部门:</label>
 	            <select id="parentDep" name="parent" required="true">
-	            	#{list items: divisions, as: 'division'}
+	            	#{list items: list, as: 'division'}
 	            	<option value="${division._id}">${division.name}</option>
 	            	#{/list}
 	            </select>

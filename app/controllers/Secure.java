@@ -91,6 +91,32 @@ public class Secure extends Controller {
 		models.Administrator admin = models.Administrator.findById(adminId);
 		result.add(admin.department);
 		result.addAll(eachDepartments(admin.department));
+		
+		for (models.Department department2 : result) {
+			if(department2.codeLength == 3){
+				department2.name = "|--"+department2.name;
+			}
+			
+			if(department2.codeLength == 6){
+				department2.name = "|--|--"+department2.name;
+			}
+			
+			if(department2.codeLength == 9){
+				department2.name = "|--|--|--"+department2.name;
+			}
+			
+			if(department2.codeLength == 12){
+				department2.name = "|--|--|--|--"+department2.name;
+			}
+			
+			if(department2.codeLength == 15){
+				department2.name = "|--|--|--|--|--|--"+department2.name;
+			}
+			
+			if(department2.codeLength == 18){
+				department2.name = "|--|--|--|--|--|--|--"+department2.name;
+			}
+		}
 		return result;
 	}
 	
