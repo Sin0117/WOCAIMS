@@ -47,73 +47,77 @@
 	<div id="detail" class="easyui-dialog" style="width: 480px; height: 320px; padding: 10px 20px;" closed="true">
 		<div class="ftitle">男职工信息</div>
 		<div class="fitem">  
-	            <label>职工姓名:</label>  
-	            <span id="detail_name" />  
-	        </div>  
-	        <div class="fitem">  
-	            <label>汉族人口数:</label>  
-	            <span id="detail_han" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>少数民族人口数:</label>  
-	            <span id="detail_minority" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>家庭地址:</label>  
-	            <span id="detail_live" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>配偶姓名:</label>  
-	            <span id="detail_woman" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>配偶出生年月:</label>  
-	            <span id="detail_womanDate" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>结婚时间:</label>  
-	            <span id="detail_weddingTime" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>户口性质:</label>  
-	            <span id="detail_type" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>子女数-男口:</label>  
-	            <span id="detail_boy" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>子女数-女:</label>  
-	            <span id="detail_girl" />  
-	        </div>
-			<div class="fitem">  
-	            <label>子女出生日期-最小:</label>  
-	            <span id="detail_childrenMinDate" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>子女出生日期-最大:</label>  
-	            <span id="detail_childrenMaxDate" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>禁忌症:</label>  
-	            <span id="detail_contraindication" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>节育情况:</label>  
-	            <span id="detail_measure" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>节育时间:</label>  
-	            <span id="detail_measureDate" />  
-	        </div>
-	        <div class="fitem">  
-	            <label>备注:</label>
-	            <span id="detail_notes" />
-	        </div>
-	        <div class="fitem">  
-	            <label>工作单位:</label>
-	            <span id="detail_departmentName" />
-	        </div>
+            <label>职工姓名:</label>  
+            <span id="detail_name" />  
+        </div>
+        <div class="fitem">  
+            <label>户编码:</label>  
+            <span id="detail_houseCode" />  
+        </div> 
+        <div class="fitem">  
+            <label>汉族人口数:</label>  
+            <span id="detail_han" />  
+        </div>
+        <div class="fitem">  
+            <label>少数民族人口数:</label>  
+            <span id="detail_minority" />  
+        </div>
+        <div class="fitem">  
+            <label>家庭地址:</label>  
+            <span id="detail_live" />  
+        </div>
+        <div class="fitem">  
+            <label>配偶姓名:</label>  
+            <span id="detail_woman" />  
+        </div>
+        <div class="fitem">  
+            <label>配偶出生年月:</label>  
+            <span id="detail_womanDate" />  
+        </div>
+        <div class="fitem">  
+            <label>结婚时间:</label>  
+            <span id="detail_weddingTime" />  
+        </div>
+        <div class="fitem">  
+            <label>户口性质:</label>  
+            <span id="detail_type" />  
+        </div>
+        <div class="fitem">  
+            <label>子女数-男口:</label>  
+            <span id="detail_boy" />  
+        </div>
+        <div class="fitem">  
+            <label>子女数-女:</label>  
+            <span id="detail_girl" />  
+        </div>
+		<div class="fitem">  
+            <label>子女出生日期-最小:</label>  
+            <span id="detail_childrenMinDate" />  
+        </div>
+        <div class="fitem">  
+            <label>子女出生日期-最大:</label>  
+            <span id="detail_childrenMaxDate" />  
+        </div>
+        <div class="fitem">  
+            <label>禁忌症:</label>  
+            <span id="detail_contraindication" />  
+        </div>
+        <div class="fitem">  
+            <label>节育情况:</label>  
+            <span id="detail_measure" />  
+        </div>
+        <div class="fitem">  
+            <label>节育时间:</label>  
+            <span id="detail_measureDate" />  
+        </div>
+        <div class="fitem">  
+            <label>备注:</label>
+            <span id="detail_notes" />
+        </div>
+        <div class="fitem">  
+            <label>工作单位:</label>
+            <span id="detail_departmentName" />
+        </div>
 	</div>
 	  
 	<div id="dlg" class="easyui-dialog" style="width:480px;height:320px;padding:10px 20px" closed="true" buttons="#dlg-buttons">  
@@ -122,7 +126,11 @@
 	        <div class="fitem">  
 	            <label>职工姓名:</label>  
 	            <input name="name" class="easyui-validatebox" required="true">  
-	        </div>  
+	        </div>
+	        <div class="fitem">  
+	            <label>户编码:</label>  
+	            <input name="houseCode" class="easyui-validatebox" required="true">  
+	        </div>
 	        <div class="fitem">  
 	            <label>汉族人口数:</label>  
 	            <input name="han" class="easyui-validatebox">  

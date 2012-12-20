@@ -17,15 +17,18 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
+import models.enums.AuditType;
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
-import utils.Utils;
 
+import com.google.gson.GsonBuilder;
 import com.mongodb.util.JSON;
 
 /** 计生报表管理 */
 public class Planning extends Controller {
 	public static final int PAGE_SIZE = 20;
+	
+	public static List<models.Department> deps;
 	/** 管理入口 .*/
 	public static void index(String keyword, String department, int page, int size) {
 		List<models.Department> divisions = Secure.getDepartments();
@@ -140,7 +143,7 @@ public class Planning extends Controller {
 		}
 	}
 	
-	private static WritableSheet  method(WritableSheet ws,WritableCellFormat wcfFC2,int cols,int rows){
+	private static WritableSheet method(WritableSheet ws,WritableCellFormat wcfFC2,int cols,int rows){
 		try{
 			Label label15_2 = new Label(0, 4, "年初人口数", wcfFC2);
 			ws.addCell(label15_2);
@@ -308,7 +311,7 @@ public class Planning extends Controller {
 		return ws;
 	}
 	
-	private static WritableSheet  method2(WritableSheet ws,WritableCellFormat wcfFC2,int cols,int rows){
+	private static WritableSheet method2(WritableSheet ws,WritableCellFormat wcfFC2,int cols,int rows){
 		try{
 			Label label33_2 = new Label(5, 4, "出生", wcfFC2);
 			ws.addCell(label33_2);
@@ -458,7 +461,7 @@ public class Planning extends Controller {
 		}
 		return ws;
 	}
-	private static WritableSheet  method3(WritableSheet ws,WritableCellFormat wcfFC2,int cols,int rows){
+	private static WritableSheet method3(WritableSheet ws,WritableCellFormat wcfFC2,int cols,int rows){
 		try{
 			Label label51_2 = new Label(10, 4, "现孕", wcfFC2);
 			ws.addCell(label51_2);
@@ -618,52 +621,59 @@ public class Planning extends Controller {
 		return ws;
 	}
 	
+	/** 获取全部的部门. */
+	public static List<models.Department> departments() {
+		if (deps == null) {
+			String adminId = session.get("admin");
+			models.Administrator admin = models.Administrator.findById(adminId);
+			deps = new ArrayList<models.Department>();
+			deps.add(admin.department);
+			deps.addAll(Secure.eachDepartments(admin.department));
+		}
+		return deps;
+	}
 	/** 获取数据列表. */
-	public static void list(String keyword, Date date, String department, int page, int rows) {
+	public static void list(String keyword, String department, int page, int rows) {
 		rows = rows != 0 ? rows : PAGE_SIZE;
-		List<models.Flup> lists = null;
+		List<models.Planning> lists = null;
 		if (department == null || "".equals(department)) {
-			lists = findAll(keyword, date, page, rows);
+			lists = findAll(keyword, page, rows);
 		} else {
 			models.Department dep = models.Department.findById(department);
 			if (dep != null) {
-				MorphiaQuery query = models.Flup.find();
+				MorphiaQuery query = models.Planning.find();
 				if (keyword != null && !"".equals(keyword))
 					query.filter("name", keyword);
-				if (date != null)
-					query.filter("date", date);
 				query.filter("department", dep);
 				lists = query.limit(rows).offset(page * rows - rows).asList();
 			} else {
-				lists = findAll(keyword, date, page, rows);
+				lists = findAll(keyword, page, rows);
 			}
 		}
 		List<Object> datas = new ArrayList<Object>();
 		Map<String, Object> result = new HashMap<String, Object>();
-		for (models.Flup mode : lists) {
+		for (models.Planning mode : lists) {
 			datas.add(mode.serialize());
 		}
 		result.put("page", page);
 		result.put("rows", datas);
-		result.put("total", models.Flup.count());
+		result.put("total", models.Planning.count());
 		result.put("size", rows);
 		renderJSON(result);
 	}
 	
 	/** 获取当前操作者的全部数据. */
-	private static List<models.Flup> findAll(String keyword, Date date, int page, int rows) {
+	private static List<models.Planning> findAll(String keyword, int page, int rows) {
 		List<models.Department> departments = Secure.getDepartments();
-		List<models.Flup> result = new ArrayList<models.Flup>();
+		List<models.Planning> result = new ArrayList<models.Planning>();
 		int size = 0, offset = page * rows - rows, end = offset + rows;
 		for (models.Department department : departments) {
-			MorphiaQuery query = models.Flup.find("byDepartment", department);
+			MorphiaQuery query = models.Planning.find("byDepartment", department);
 			if (keyword != null && !"".equals(keyword))
 				query.filter("name", keyword);
-			if (date != null)
-				query.filter("date", date);
-			List<models.Flup> data = query.asList();
+			List<models.Planning> data = query.asList();
 			if (size >= offset && size < end) {
-				for (models.Flup flup : data) {
+				for (models.Planning flup : data) {
 					result.add(flup);
 					size ++;
 				}
@@ -678,33 +688,492 @@ public class Planning extends Controller {
 	}
 	
 	/** 添加操作 */
-	public static void add(String name, String reason, String content, String date,
-			String staff, String notes, String department) {
-		Map<String, String> result = new HashMap<String, String>();
-		if (department == null || "".equals(department)) {
-			result.put("error", "随访记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
+	public static void add() {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			String adminId = session.get("admin");
+			models.Administrator admin = models.Administrator.findById(adminId);
+			models.Planning.find("byDepartment", admin.department).delete();
+			models.Planning newData = new models.Planning();
+			List<models.Department> deps = departments();
+			Date newDate = new Date();
+			newData.department = admin.department;
+			newData.beginPopulation = getBeginPopulation();
+			newData.endPopulation = getEndPopulation();
+			newData.maleWorker = getMaleWorker();
+			newData.femaleWorker = getFemaleWorker();
+			newData.childBearingAge = getChildBearingAge();
+			newData.marriedChildBearingAge = getMarriedChildBearingAge();
+			newData.marriedNotBrood = getMarriedNotBrood();
+			newData.childWomens = getChildWomens();
+			newData.cerclage = getCerclage();
+			newData.cerclageRate = getCerclageRate();
+			newData.childCard = getChildCard();
+			newData.childrenWomens = getChildrenWomens();
+			newData.putRing = getPutRing();
+			newData.putRingRate = getPutRingRate();
+			newData.ligation = getLigation();
+			newData.ligationRate = getLigationRate();
+			newData.bornTotal = getBornTotal(); 
+			newData.child = getChild();
+			newData.children = getChildren();
+			newData.womenFirstMarriage = getWomenFirstMarriage();
+			newData.womens23years = getWomens23years();
+			newData.menFirstMarriage = getMenFirstMarriage();
+			newData.men25years = getMen25years();
+			newData.finalSelection = getFinalSelection();
+			newData.finalMaleFirm = getFinalMaleFirm();
+			newData.finalFemaleFirm = getFinalFemaleFirm();
+			newData.finalPutRing = getFinalPutRing();
+			newData.finalSkinBuried = getFinalSkinBuried();
+			newData.finalCondoms = getFinalCondoms();
+			newData.finalExternal = getFinalExternal();
+			newData.finalOther = getFinalOther();
+			newData.now = getNow();
+			newData.nowChild = getNowChild();
+			newData.nowChildren = getNowChildren();
+			newData.bornThisYear = getBornThisYear();
+			newData.bornNextYear = getBornNextYear();
+			newData.operation = getOperation();
+			newData.operationMaleFirm = getOperationMaleFirm();
+			newData.operationFemaleFirm = getOperationFemaleFirm();
+			newData.operationPutRing = getOperationPutRing();
+			newData.operationTakeRing = getOperationTakeRing();
+			newData.operationAbortion = getOperationAbortion();
+			newData.operationInduced = getOperationInduced();
+			newData.nationality = getNationality();
+			newData.comprehensive = getComprehensive(); 
+			newData.lastMarriage = getLastMarriage();
+			newData.lastPregnant = getLastPregnant();
+			newData.charge = admin.name;
+			newData.preparer = admin;
+			newData.status = AuditType.AUDIT;
+			newData.createAt = newDate;
+			newData.modifyAt = newDate;
+			newData.save();
+			result.put("success", true);
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			result.put("error", "统计失败，请稍候再试！");
 			renderText(JSON.serialize(result));
 		}
-		models.Flup newData = new models.Flup();
-		Date newDate = new Date();
-		newData.name = name;
-		newData.reason = reason;
-		newData.content = content;
-		newData.date = Utils.parseDate(date);
-		newData.staff = staff;
-		newData.notes = notes;
-		newData.createAt = newDate;
-		newData.modifyAt = newDate;
-		newData.department = models.Department.findById(department);
-		newData.save();
 		renderText(JSON.serialize(result));
+	}
+	// 年初人口数
+	private static int getBeginPopulation() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Workers.find("byDepartment", dep).count() + models.WomenCard.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 年末人口数
+	private static int getEndPopulation() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			int begin = getBeginPopulation(), out = 0, into = 0;
+			List<models.Household> list = models.Household.find("byDepartment", dep).asList();
+			for (models.Household data : list) {
+				out += data.out;
+			}
+			list = models.Household.find("byDepartment", dep).asList();
+			for (models.Household data : list) {
+				into += data.into;
+			}
+			count += begin - out + into;
+		}
+		return count;
+	}
+	// 获取男职工数
+	private static int getMaleWorker() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Workers.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 获取女职工数
+	private static int getFemaleWorker() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.WomenCard.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 育龄妇女数
+	private static int getChildBearingAge() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.WomenCard.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 已婚育龄妇女数
+	private static int getMarriedChildBearingAge() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.WomenCard.find("byDepartment", dep).filter("womanFirstMarriage exists", true).count();
+		}
+		return count;
+	}
+	// 已婚未育妇女数
+	private static int getMarriedNotBrood() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.WomenCard.find("byDepartment", dep).filter("womanFirstMarriage exists", false).count();
+		}
+		return count;
+	}
+	// 一孩妇女数
+	private static int getChildWomens() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (card.childrens.size() > 0 && card.childrens.size() < 2)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 环扎数
+	private static int getCerclage() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.Household> list = models.Household.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.Household house : list) {
+				models.WomenCard women = models.WomenCard.find("byHouseCode", dep).get();
+				models.Workers man = models.Workers.find("byHouseCode", dep).get();
+				if (women.oligogenics.measureDate != null || man.measureDate != null)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 环扎率
+	private static float getCerclageRate() {
+		float count = 0;
+		float num = (float)getCerclage();
+		for (models.Department dep : deps)
+			count += (float)models.Household.find("byDepartment", dep).count();
+		return num / count;
+	}
+	// 领独生子女证人数
+	private static int getChildCard() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.OnlyChildren.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 二孩及以上妇女数
+	private static int getChildrenWomens() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (card.childrens.size() > 1)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 放环数
+	private static int getPutRing() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (card.oligogenics.measureDate != null)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 放环率
+	private static float getPutRingRate() {
+		float count = 0;
+		for (models.Department dep : deps) {
+			count += models.WomenCard.find("byDepartment", dep).count();
+		}
+		return getPutRing() / count;
+	}
+	// 结扎数
+	private static int getLigation() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.Workers> list = models.Workers.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.Workers er : list) {
+				if (er.measureDate != null)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 结扎率
+	private static float getLigationRate() {
+		float count = 0;
+		for (models.Department dep : deps) {
+			count += models.Workers.find("byDepartment", dep).count();
+		}
+		return getLigation() / count;
+	}
+	// 出生总数
+	private static int getBornTotal() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.BirthStatus.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 一孩
+	private static int getChild() {
+		return getChildWomens();
+	}
+	// 二孩
+	private static int getChildren() {
+		return getChildrenWomens();
+	}
+	// 女性初婚
+	private static int getWomenFirstMarriage() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (card.womanFirstMarriage.getYear() == card.womanCurrentMarriage.getYear())
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 23岁以上女性人数
+	private static int getWomens23years() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int year = new Date().getYear();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (year - card.womanBirth.getYear() > 23)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 男性初婚
+	private static int getMenFirstMarriage() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (card.manFirstMarriage.getYear() == card.manCurrentMarriage.getYear())
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 25岁以上男性人数
+	private static int getMen25years() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
+			int year = new Date().getYear();
+			int size = 0;
+			for (models.WomenCard card : list) {
+				if (year - card.manBirth.getYear() > 25)
+					size ++;
+			}
+			count += size;
+		}
+		return count;
+	}
+	// 期末选用各种避孕人数
+	private static int getFinalSelection() {
+		return getLigation() + getPutRing();
+	}
+	// 男扎
+	private static int getFinalMaleFirm() {
+		return getLigation();
+	}
+	// 女扎
+	private static int getFinalFemaleFirm() {
+		return getPutRing();
+	}
+	// 放环
+	private static int getFinalPutRing() {
+		return 0;
+	}
+	// 皮埋
+	private static int getFinalSkinBuried() {
+		return 0;
+	}
+	// 用套
+	private static int getFinalCondoms() {
+		return 0;
+	}
+	// 外用
+	private static int getFinalExternal() {
+		return 0;
+	}
+	// 其他
+	private static int getFinalOther() {
+		return 0;
+	}
+	// 现孕
+	private static int getNow() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Conceive.find("byDepartment", dep).count();
+		}
+		return count;
+	}
+	// 一孩
+	private static int getNowChild() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Conceive.find("byDepartment", dep).filter("size", 1).count();
+		}
+		return count;
+	}
+	// 二孩
+	private static int getNowChildren() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Conceive.find("byDepartment", dep).filter("size > ", 1).count();
+		}
+		return count;
+	}
+	// 生在今年
+	private static int getBornThisYear() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Conceive.find("byDepartment", dep).filter("thisYear", true).count();
+		}
+		return count;
+	}
+	// 生在下年
+	private static int getBornNextYear() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.Conceive.find("byDepartment", dep).filter("thisYear", false).count();
+		}
+		return count;
+	}
+	// 本期施行计划生育手术例数
+	private static int getOperation() {
+		return getFinalSelection();
+	}
+	// 女扎
+	private static int getOperationFemaleFirm() {
+		return getFinalFemaleFirm();
+	}
+	// 男扎
+	private static int getOperationMaleFirm() {
+		return getFinalMaleFirm();
+	}
+	// 放环
+	private static int getOperationPutRing() {
+		return 0;
+	}
+	// 取环
+	private static int getOperationTakeRing() {
+		return 0;
+	}
+	// 人工流产
+	private static int getOperationAbortion() {
+		return 0;
+	}
+	// 引产
+	private static int getOperationInduced() {
+		return 0;
+	}
+	// 汉族独生子女领证率
+	private static int getNationality() {
+		int count = 0;
+		for (models.Department dep : deps) {
+			count += models.OnlyChildren.find("byDepartment", dep).filter("nation", "汉").count() +
+			models.OnlyChildren.find("byDepartment", dep).filter("nation", "汉族").count();
+		}
+		return count;
+	}
+	// 综合节育率
+	private static float getComprehensive() {
+		return getLigationRate();
+	}
+	// 晚婚率
+	private static float getLastMarriage() {
+		float count = 0;
+		float size = 0;
+		for (models.Department dep : deps) {
+			MorphiaQuery q = models.WomenCard.find("byDepartment", dep);
+			count += (float)q.count();
+			List<models.WomenCard> list = q.asList();
+			for (models.WomenCard card : list) {
+				if (card.womanFirstMarriage.getYear() > 22)
+					size ++;
+			}
+		}
+		return size / count;
+	}
+	// 晚育率
+	private static float getLastPregnant() {
+		float count = 0;
+		float size = 0;
+		for (models.Department dep : deps) {
+			MorphiaQuery q = models.BirthStatus.find("byDepartment", dep).filter("size", 1);
+			count += (float)q.count();
+			List<models.BirthStatus> list = q.asList();
+			int year = new Date().getYear();
+			for (models.BirthStatus card : list) {
+				if (year - card.birth.getYear() > 23)
+					size ++;
+			}
+		}
+		return size / count;
 	}
 	
 	/** 删除操作 */
-	public static void del(String id) {
+	public static void back(String id) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			models.Flup.findById(id).delete();
+			String adminId = session.get("admin");
+			models.Administrator admin = models.Administrator.findById(adminId);
+			if (admin.getId().toString().equals(id)) {
+				models.Planning.findById(id).delete();
+			} else {
+				models.Planning delData = models.Planning.findById(id);
+				delData.status = AuditType.BACK;
+				delData.save();
+			}
+			result.put("success", true);
+		} catch (Exception exc) {
+			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
+		}
+		renderText(JSON.serialize(result));
+	}
+	
+	/** 审核通过. */
+	public static void pass(String id) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			models.Planning passData = models.Planning.findById(id);
+			passData.status = AuditType.PASS;
+			passData.save();
 			result.put("success", true);
 		} catch (Exception exc) {
 			result.put("error", "数据库异常，可能其他人正在操作，请刷新后重试。");
@@ -713,23 +1182,70 @@ public class Planning extends Controller {
 	}
 	
 	/** 修改操作 */
-	public static void update(String id, String name, String reason, String content, String date,
-			String staff, String notes, String department) {
+	public static void update(String id, int beginPopulation, int endPopulation, int maleWorker, int femaleWorker, 
+			int childBearingAge, int marriedChildBearingAge, int marriedNotBrood, int childWomens, int cerclage, 
+			float cerclageRate, int childCard, int childrenWomens, int putRing, float putRingRate, int ligation, float ligationRate, 
+			int bornTotal, int child, int children, int womenFirstMarriage, int womens23years, int menFirstMarriage, 
+			int men25years, int finalSelection, int finalMaleFirm, int finalFemaleFirm, int finalPutRing, int finalSkinBuried, 
+			int finalCondoms, int finalExternal, int finalOther, int now, int nowChild, int nowChildren, int bornThisYear, 
+			int bornNextYear, int operation, int operationMaleFirm, int operationFemaleFirm, int operationPutRing, 
+			int operationTakeRing, int operationAbortion, int operationInduced, float nationality, float comprehensive, 
+			float lastMarriage, float lastPregnant, String charge) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		if (department == null || "".equals(department)) {
-			result.put("error", "随访记录添加失败，请选择该所属部门。<br>如果还未创建部门，请先创建部门后进行添加");
-			renderText(JSON.serialize(result));
-		}
 		try {
-			models.Flup cur = models.Flup.findById(id);
-			cur.name = name;
-			cur.reason = reason;
-			cur.content = content;
-			cur.date = Utils.parseDate(date);
-			cur.staff = staff;
-			cur.notes = notes;
+			String adminId = session.get("admin");
+			models.Administrator admin = models.Administrator.findById(adminId);
+			models.Planning cur = models.Planning.findById(id);
+			cur.beginPopulation = beginPopulation;
+			cur.endPopulation = endPopulation;
+			cur.maleWorker = maleWorker;
+			cur.femaleWorker = femaleWorker;
+			cur.childBearingAge = childBearingAge;
+			cur.marriedChildBearingAge = marriedChildBearingAge;
+			cur.marriedNotBrood = marriedNotBrood;
+			cur.childWomens = childWomens;
+			cur.cerclage = cerclage;
+			cur.cerclageRate = cerclageRate;
+			cur.childCard = childCard;
+			cur.childrenWomens = childrenWomens;
+			cur.putRing = putRing;
+			cur.putRingRate = putRingRate;
+			cur.ligation = ligation;
+			cur.ligationRate = ligationRate;
+			cur.bornTotal = bornTotal; 
+			cur.child = child;
+			cur.children = children;
+			cur.womenFirstMarriage = womenFirstMarriage;
+			cur.womens23years = womens23years;
+			cur.menFirstMarriage = menFirstMarriage;
+			cur.men25years = men25years;
+			cur.finalSelection = finalSelection;
+			cur.finalMaleFirm = finalMaleFirm;
+			cur.finalFemaleFirm = finalFemaleFirm;
+			cur.finalPutRing = finalPutRing;
+			cur.finalSkinBuried = finalSkinBuried;
+			cur.finalCondoms = finalCondoms;
+			cur.finalExternal = finalExternal;
+			cur.finalOther = finalOther;
+			cur.now = now;
+			cur.nowChild = nowChild;
+			cur.nowChildren = nowChildren;
+			cur.bornThisYear = bornThisYear;
+			cur.bornNextYear = bornNextYear;
+			cur.operation = operation;
+			cur.operationMaleFirm = operationMaleFirm;
+			cur.operationFemaleFirm = operationFemaleFirm;
+			cur.operationPutRing = operationPutRing;
+			cur.operationTakeRing = operationTakeRing;
+			cur.operationAbortion = operationAbortion;
+			cur.operationInduced = operationInduced;
+			cur.nationality = nationality;
+			cur.comprehensive = comprehensive; 
+			cur.lastMarriage = lastMarriage;
+			cur.lastPregnant = lastPregnant;
+			cur.charge = charge;
+			cur.preparer = admin;
 			cur.modifyAt = new Date();
-			cur.department = models.Department.findById(department);
 			cur.save();
 			result.put("success", true);
 		} catch (Exception exc) {

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import models.enums.AuditType;
 import play.modules.morphia.Model;
 
 import com.google.code.morphia.annotations.Entity;
@@ -51,7 +52,7 @@ public class Planning extends Model {
 	public int bornTotal; 
 	// 一孩
 	public int child;
-	// 二孩
+	// 二孩及以上
 	public int children;
 	// 女性初婚
 	public int womenFirstMarriage;
@@ -81,7 +82,7 @@ public class Planning extends Model {
 	public int now;
 	// 一孩
 	public int nowChild;
-	// 二孩
+	// 二孩及以上
 	public int nowChildren;
 	// 生在今年
 	public int bornThisYear;
@@ -117,6 +118,8 @@ public class Planning extends Model {
 	public Date createAt;
 	// 修改时间
 	public Date modifyAt;
+	// 审核状态
+	public AuditType status;
 	
 	/** json序列化. */
 	public Map<String, Object> serialize() {
@@ -124,6 +127,57 @@ public class Planning extends Model {
 		result.put("id", this.getId().toString());
 		result.put("department", this.department != null ? this.department.serialize() : "");
 		result.put("departmentName", this.department != null ? this.department.name : "");
+		result.put("beginPopulation", this.beginPopulation + "");
+		result.put("endPopulation", this.endPopulation + "");
+		result.put("maleWorker", this.maleWorker + "");
+		result.put("femaleWorker", this.maleWorker + "");
+		result.put("childBearingAge", this.childBearingAge + "");
+		result.put("marriedChildBearingAge", this.marriedChildBearingAge + "");
+		result.put("marriedNotBrood", this.marriedNotBrood + "");
+		result.put("childWomens", this.childWomens + "");
+		result.put("cerclage", this.cerclage + "");
+		result.put("cerclageRate", this.cerclageRate + "");
+		result.put("childCard", this.childCard + "");
+		result.put("childrenWomens", this.childrenWomens + "");
+		result.put("putRing", this.putRing + "");
+		result.put("putRingRate", this.putRingRate + "");
+		result.put("ligation", this.ligation + "");
+		result.put("ligationRate", this.ligationRate + "");
+		result.put("bornTotal", this.bornTotal + ""); 
+		result.put("child", this.child + "");
+		result.put("children", this.children + "");
+		result.put("womenFirstMarriage", this.womenFirstMarriage + "");
+		result.put("womens23years", this.womens23years + "");
+		result.put("menFirstMarriage", this.menFirstMarriage + "");
+		result.put("men25years", this.men25years + "");
+		result.put("finalSelection", this.finalSelection + "");
+		result.put("finalMaleFirm", this.finalMaleFirm + "");
+		result.put("finalFemaleFirm", this.finalFemaleFirm + "");
+		result.put("finalPutRing", this.finalPutRing + "");
+		result.put("finalSkinBuried", this.finalSkinBuried + "");
+		result.put("finalCondoms", this.finalCondoms + "");
+		result.put("finalExternal", this.finalExternal + "");
+		result.put("finalOther", this.finalOther + "");
+		result.put("now", this.now + "");
+		result.put("nowChild", this.nowChild + "");
+		result.put("nowChildren", this.nowChildren + "");
+		result.put("bornThisYear", this.bornThisYear + "");
+		result.put("bornNextYear", this.bornNextYear + "");
+		result.put("operation", this.operation + "");
+		result.put("operationMaleFirm", this.operationMaleFirm + "");
+		result.put("operationFemaleFirm", this.operationFemaleFirm + "");
+		result.put("operationPutRing", this.operationPutRing + "");
+		result.put("operationTakeRing", this.operationTakeRing + "");
+		result.put("operationAbortion", this.operationAbortion + "");
+		result.put("operationInduced", this.operationInduced + "");
+		result.put("nationality", this.nationality + "");
+		result.put("comprehensive", this.comprehensive + ""); 
+		result.put("lastMarriage", this.lastMarriage + "");
+		result.put("lastPregnant", this.lastMarriage + "");
+		result.put("charge", this.charge + "");
+		result.put("status", this.status);
+		result.put("statusName", this.status == AuditType.AUDIT ? "审核中" : this.status == AuditType.PASS ? "审核通过" : "未通过");
+		result.put("preparer", this.preparer.serialize());
 		result.put("createAt", utils.Utils.formatDate(this.createAt));
 		result.put("modifyAt", utils.Utils.formatDate(this.modifyAt));
 		return result;
