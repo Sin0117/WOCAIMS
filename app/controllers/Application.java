@@ -29,8 +29,9 @@ public class Application extends Controller {
     	models.Department root = models.Department.find("byType", DepartmentLevel.UNION).get();
     	if (root == null) {
     		root = new models.Department();
-    		root.name = "公司工会";
-    		root.code = "GSGH";
+    		root.name = "准能公司";
+    		root.code = "001";
+    		root.codeLength = root.code.length();
     		root.type = DepartmentLevel.UNION;
     		root.createAt = new Date();
     		root = root.save();
@@ -38,9 +39,9 @@ public class Application extends Controller {
     	models.Administrator admin = models.Administrator.find("byDepartment", root).get();
     	if (admin == null) {
     		admin = new models.Administrator();
-    		admin.admin = "Administrator";
-    		admin.name = "总工会管理员";
-    		admin.password = "!2#4QwEr";
+    		admin.admin = "admin";
+    		admin.name = "管理员";
+    		admin.password = "123456";
     		admin.department = root;
     		admin.isAdmin = true;
     		admin.createAt = new Date();

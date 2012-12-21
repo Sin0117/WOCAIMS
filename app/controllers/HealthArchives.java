@@ -7,17 +7,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mongodb.util.JSON;
-
 import jxl.Workbook;
+import jxl.format.UnderlineStyle;
+import jxl.write.Alignment;
+import jxl.write.Colour;
 import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-
+import models.PhysicalInfo;
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
 import play.mvc.Util;
 import utils.Utils;
+
+import com.mongodb.util.JSON;
 /** 健康档案管理 */
 public class HealthArchives extends Controller {
 	public static final int PAGE_SIZE = 20;
@@ -29,148 +34,150 @@ public class HealthArchives extends Controller {
 	
 	/** 导出excel. */
 	public static void report(String keyword, String department, String id) {
-		/*
+		
 		String fileName = "健康档案-" + Secure.getAdmin().department.name + ".xls";
 		File f = new File("./excels/" + fileName);
 		models.HealthArchives data = models.HealthArchives.findById(id);
 	    try {
 	    	if (f.exists())
 	    		f.createNewFile();
-	    	int index = 0;
 	        WritableWorkbook wbook = Workbook.createWorkbook(f);
-	        WritableSheet ws = wbook.createSheet("体检报告", index++);
-	        Label label0_0 = new Label(0, 0, "单位");
-	        ws.addCell(label0_0);
-	        Label field0_0 = new Label(1, 0, data.department.name);
-	        ws.addCell(field0_0);
+	        WritableSheet ws = wbook.createSheet("健康体检报告", 0);
 	        
-	        Label label0_1 = new Label(2, 0, "单位编码");
+	        WritableFont wfont = new WritableFont(WritableFont.ARIAL, 16,WritableFont.BOLD,false,UnderlineStyle.NO_UNDERLINE,Colour.BLACK);   
+			WritableCellFormat wcfFC = new WritableCellFormat(wfont); 
+			wcfFC.setAlignment(Alignment.CENTRE);
+			Label label0_0 = new Label(0, 0, "健康体检报告",wcfFC);
+			ws.addCell(label0_0);
+			ws.mergeCells(0, 0, 5, 0); 
+	        
+	        Label label0_00 = new Label(0, 1, "单位");
+	        ws.addCell(label0_00);
+	        Label field0_00 = new Label(1, 1, data.department.name);
+	        ws.addCell(field0_00);
+	        
+	        Label label0_1 = new Label(0, 2, "单位编码");
 	        ws.addCell(label0_1);
-	        Label field0_1 = new Label(3, 0, data.department.code);
+	        Label field0_1 = new Label(1, 2, data.department.code);
 	        ws.addCell(field0_1);
 	        
-	        Label label1_0 = new Label(0, 1, "姓名");
+	        Label label1_0 = new Label(0, 3, "姓名");
 	        ws.addCell(label1_0);
-	        Label field1_0 = new Label(1, 1, data.name);
+	        Label field1_0 = new Label(1, 3, data.name);
 	        ws.addCell(field1_0);
 	        
-	        Label label1_1 = new Label(2, 1, "体检编号");
+	        Label label1_1 = new Label(0, 4, "体检编号");
 	        ws.addCell(label1_1);
-	        Label field1_1 = new Label(3, 1, data.code);
+	        Label field1_1 = new Label(1, 4, data.code);
 	        ws.addCell(field1_1);
 	        
-	        Label label2_0 = new Label(0, 2, "性别");
+	        Label label2_0 = new Label(0, 5, "性别");
 	        ws.addCell(label2_0);
-	        Label field2_0 = new Label(1, 2, data.gender);
+	        Label field2_0 = new Label(1, 5, data.gender);
 	        ws.addCell(field2_0);
 	        
-	        Label label2_1 = new Label(2, 2, "年龄");
+	        Label label2_1 = new Label(0, 6, "年龄");
 	        ws.addCell(label2_1);
-	        jxl.write.Number field2_1 = new jxl.write.Number(3, 2, data.age);
+	        jxl.write.Number field2_1 = new jxl.write.Number(1, 6, data.age);
 	        ws.addCell(field2_1);
 	        
-	        Label label3_0 = new Label(0, 3, "家庭地址");
+	        Label label3_0 = new Label(0, 7, "家庭地址");
 	        ws.addCell(label3_0);
-	        Label field3_0 = new Label(1, 3, data.home);
+	        Label field3_0 = new Label(1, 7, data.home);
 	        ws.addCell(field3_0);
 	        
-	        Label label3_1 = new Label(2, 3, "联系电话");
+	        Label label3_1 = new Label(1, 8, "联系电话");
 	        ws.addCell(label3_1);
-	        Label field3_1 = new Label(4, 3, data.tel);
+	        Label field3_1 = new Label(1, 8, data.tel);
 	        ws.addCell(field3_1);
 	        
-	        Label label4_0 = new Label(0, 4, "体检日期");
+	        Label label4_0 = new Label(0, 9, "体检日期");
 	        ws.addCell(label4_0);
-	        Label field4_0 = new Label(4, 4, data.tel);
+	        Label field4_0 = new Label(1, 9, data.tel);
 	        ws.addCell(field4_0);
 	        
-	        Label label4_1 = new Label(2, 4, "报告日期");
+	        Label label4_1 = new Label(0, 10, "报告日期");
 	        ws.addCell(label4_1);
-	        Label field4_1 = new Label(4, 4, data.tel);
+	        Label field4_1 = new Label(1, 10, data.tel);
 	        ws.addCell(field4_1);
 	        
-	        Label label5_0 = new Label(0, 5, "体检地址");
+	        Label label5_0 = new Label(0, 11, "体检地址");
 	        ws.addCell(label5_0);
-	        Label field5_0 = new Label(1, 5, data.dealthAddress);
+	        Label field5_0 = new Label(1, 11, data.dealthAddress);
 	        ws.addCell(field5_0);
 	        
-	        Label label6_0 = new Label(0, 6, "既往病史");
+	        Label label6_0 = new Label(0, 12, "既往病史");
 	        ws.addCell(label6_0);
-	        Label field6_0 = new Label(1, 6, data.history);
+	        Label field6_0 = new Label(1, 12, data.history);
 	        ws.addCell(field6_0);
 	        
+	        int contentIndex = 13;
 	        for (models.Physical physical : data.physicals) {
-	        	WritableSheet wsp = wbook.createSheet("检查项-" + physical.name, index++);
-	        	int contentIndex = 0;
-	        	Label plabel0_0 = new Label(0, contentIndex, "检查项");
-	        	wsp.addCell(plabel0_0);
-		        Label pfield0_0 = new Label(1, contentIndex, physical.name);
-		        wsp.addCell(pfield0_0);
-		        contentIndex ++;
-		        
-		        Label plabel1_0 = new Label(0, contentIndex, "检查项内容");
-		        wsp.addCell(plabel1_0);
-		        contentIndex ++;
-		        
-		        for (models.PhysicalInfo info : physical.physicalInfo) {
-			        Label pfield2_0 = new Label(0, contentIndex, info.content);
-			        wsp.addCell(pfield2_0);
-			        contentIndex ++;
-		        }
-		        
-		        if (physical.results != null) {
-			        Label plabel3_0 = new Label(0, contentIndex, "结果");
-			        wsp.addCell(plabel3_0);
-			        Label pfield3_0 = new Label(1, contentIndex, physical.results.result);
-			        wsp.addCell(pfield3_0);
-			        contentIndex ++;
-			        Label plabel3_1 = new Label(0, contentIndex, "参考值");
-			        wsp.addCell(plabel3_1);
-			        Label pfield3_1 = new Label(1, contentIndex, physical.results.reference);
-			        wsp.addCell(pfield3_1);
-			        contentIndex ++;
-			        Label plabel3_2 = new Label(0, contentIndex, "检查医生");
-			        wsp.addCell(plabel3_2);
-			        Label pfield3_2 = new Label(1, contentIndex, physical.results.doctor);
-			        wsp.addCell(pfield3_2);
-			        contentIndex ++;
-		        }
+	        	int index = 0;
+	        	++contentIndex;
+	        	Label plabel0_0 = new Label(index++, contentIndex, physical.name);
+	        	ws.addCell(plabel0_0);
+	        	Label plabel1_0 = new Label(index++, contentIndex, "体检结果");
+	        	ws.addCell(plabel1_0);
+	        	Label plabel2_0 = new Label(index++, contentIndex, "参考值");
+	        	ws.addCell(plabel2_0);
+	        	Label plabel3_0 = new Label(index++, contentIndex, "单位");
+	        	ws.addCell(plabel3_0);
+	        	Label plabel4_0 = new Label(index++, contentIndex, "检验者");
+	        	ws.addCell(plabel4_0);
+	        	
+	        	if(physical.physicalInfo != null){
+		        	for (PhysicalInfo physicalInfo : physical.physicalInfo) {
+		        		index = 0;
+		        		contentIndex++;
+		        		Label plabel5_0 = new Label(index++, contentIndex, physicalInfo.content);
+			        	ws.addCell(plabel5_0);
+			        	Label plabel6_0 = new Label(index++, contentIndex, physicalInfo.result);
+			        	ws.addCell(plabel6_0);
+			        	Label plabel7_0 = new Label(index++, contentIndex, physicalInfo.reference);
+			        	ws.addCell(plabel7_0);
+			        	Label plabel8_0 = new Label(index++, contentIndex, physicalInfo.department.name);
+			        	ws.addCell(plabel8_0);
+			        	Label plabel9_0 = new Label(index++, contentIndex, physicalInfo.doctor1);
+			        	ws.addCell(plabel9_0);
+					}
+	        	}
+	        	
+	        	contentIndex++;
 	        }
 	        
-	        if (data.treatments != null) {
-	        	WritableSheet wsp = wbook.createSheet("结果汇总及治疗意见", index++);
-	        	int contentIndex = 0;
-	        	for (models.PhysicalTreatment treatment : data.treatments) {
-			        Label plabel4_0 = new Label(0, contentIndex, "检查异常结果汇总");
-			        wsp.addCell(plabel4_0);
-			        Label pfield4_0 = new Label(1, contentIndex, treatment.summary);
-			        wsp.addCell(pfield4_0);
-			        contentIndex ++;
-			        Label plabel4_1 = new Label(0, contentIndex, "结论");
-			        wsp.addCell(plabel4_1);
-			        Label pfield4_1 = new Label(1, contentIndex, treatment.conclusion);
-			        wsp.addCell(pfield4_1);
-			        contentIndex ++;
-			        Label plabel4_2 = new Label(0, contentIndex, "治疗意见或建议");
-			        wsp.addCell(plabel4_2);
-			        Label pfield4_2 = new Label(1, contentIndex, treatment.treatment);
-			        wsp.addCell(pfield4_2);
-			        contentIndex ++;
-			        Label plabel4_3 = new Label(0, contentIndex, "健康咨询地址");
-			        wsp.addCell(plabel4_3);
-			        Label pfield4_3 = new Label(1, contentIndex, treatment.address);
-			        wsp.addCell(pfield4_3);
-			        contentIndex ++;
-			        Label plabel4_4 = new Label(0, contentIndex, "咨询电话");
-			        wsp.addCell(plabel4_4);
-			        Label pfield4_4 = new Label(1, contentIndex, treatment.tel);
-			        wsp.addCell(pfield4_4);
-			        Label plabel4_5 = new Label(2, contentIndex, "主检医生");
-			        wsp.addCell(plabel4_5);
-			        Label pfield4_5 = new Label(3, contentIndex, treatment.treatmentDoctor);
-			        wsp.addCell(pfield4_5);
-	        	}
-	        }
+	        contentIndex++;
+	        contentIndex++;
+	        Label plabel4_0 = new Label(0, contentIndex, "检查异常结果汇总");
+	        ws.addCell(plabel4_0);
+	        Label pfield4_0 = new Label(1, contentIndex, data.treatments.summary);
+	        ws.addCell(pfield4_0);
+	        contentIndex++;
+	        Label plabel4_1 = new Label(0, contentIndex, "结论");
+	        ws.addCell(plabel4_1);
+	        Label pfield4_1 = new Label(1, contentIndex, data.treatments.conclusion);
+	        ws.addCell(pfield4_1);
+	        contentIndex++;
+	        Label plabel4_2 = new Label(0, contentIndex, "治疗意见或建议");
+	        ws.addCell(plabel4_2);
+	        Label pfield4_2 = new Label(1, contentIndex, data.treatments.treatment);
+	        ws.addCell(pfield4_2);
+	        contentIndex++;
+	        Label plabel4_3 = new Label(0, contentIndex, "健康咨询地址");
+	        ws.addCell(plabel4_3);
+	        Label pfield4_3 = new Label(1, contentIndex, data.treatments.address);
+	        ws.addCell(pfield4_3);
+	        contentIndex++;
+	        Label plabel4_4 = new Label(0, contentIndex, "咨询电话");
+	        ws.addCell(plabel4_4);
+	        Label pfield4_4 = new Label(1, contentIndex, data.treatments.phone);
+	        ws.addCell(pfield4_4);
+	        contentIndex++;
+	        Label plabel4_5 = new Label(0, contentIndex, "主检医生");
+	        ws.addCell(plabel4_5);
+	        Label pfield4_5 = new Label(1, contentIndex, data.treatments.treatmentDoctor);
+	        ws.addCell(pfield4_5);
+	        
 	        wbook.write();
 	        wbook.close();
 	        renderBinary(f, fileName);
@@ -178,7 +185,7 @@ public class HealthArchives extends Controller {
 	    	exception.printStackTrace();
 	    	error(exception);
 	    }
-	    */
+	    
 	}
 	
 	/** 获取数据列表. */

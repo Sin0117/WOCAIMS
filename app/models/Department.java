@@ -27,6 +27,8 @@ public class Department extends Model {
 	public Date createAt;
 	// 部门人数
 	public long size;
+	//编号长度
+	public long codeLength;
 	
 	// 部门人数增加
 	public long increment() {
@@ -54,6 +56,7 @@ public class Department extends Model {
 		result.put("id", this.getId().toString());
 		result.put("name", this.name);
 		result.put("code", this.code);
+		result.put("codeLength", this.codeLength);
 		result.put("type", this.type.toString());
 		result.put("typeName", getDepartmentName());
 		result.put("parent", this.parent != null ? this.parent.serialize() : null);
