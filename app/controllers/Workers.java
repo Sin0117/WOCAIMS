@@ -265,7 +265,7 @@ public class Workers extends Controller {
 	}
 
 	/** 添加操作 */
-	public static void add(String name, int han, int minority, String woman,
+	public static void add(String name, String houseCode, int han, int minority, String woman,
 			String womanDate, String weddingTime, String type, int boy,
 			int girl, String childrenMinDate, String childrenMaxDate,
 			String contraindication, String measure, String measureDate,
@@ -278,6 +278,7 @@ public class Workers extends Controller {
 		models.Workers newData = new models.Workers();
 		Date newDate = new Date();
 		newData.name = name;
+		newData.houseCode = houseCode;
 		newData.han = han;
 		newData.minority = minority;
 		newData.woman = woman;
@@ -313,7 +314,7 @@ public class Workers extends Controller {
 	}
 
 	/** 修改操作 */
-	public static void update(String id, String name, int han, int minority,
+	public static void update(String id, String houseCode, String name, int han, int minority,
 			String woman, String womanDate, String weddingTime, String type,
 			int boy, int girl, String childrenMinDate, String childrenMaxDate,
 			String contraindication, String measure, String measureDate,
@@ -326,6 +327,7 @@ public class Workers extends Controller {
 		try {
 			models.Workers cur = models.Workers.findById(id);
 			cur.name = name;
+			cur.houseCode = houseCode;
 			cur.han = han;
 			cur.minority = minority;
 			cur.woman = woman;

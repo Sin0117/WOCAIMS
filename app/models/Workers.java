@@ -17,6 +17,8 @@ public class Workers extends Model {
 	public Department department;
 	// 职工姓名
 	public String name;
+	// 户编码
+	public String houseCode;
 	// 汉族人口数
 	public int han;
 	// 少数民族人口数
