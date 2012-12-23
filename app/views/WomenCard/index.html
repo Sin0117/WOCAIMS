@@ -421,6 +421,14 @@
             <span id="detail_children_gender" />  
         </div>
         <div class="fitem">  
+            <label>是否处罚:</label>
+            <span id="detail_children_punish" />
+        </div>
+        <div class="fitem">  
+            <label>是否晚育:</label>
+            <span id="detail_children_late" />
+        </div>
+        <div class="fitem">  
             <label>是否存活:</label>  
             <span id="detail_children_survivalTxt" />  
         </div>
@@ -459,6 +467,16 @@
 	            <label class="rd"><input name="gender" type="radio" value="女" class="easyui-validatebox">女</label> 
 	        </div>
 	        <div class="fitem">  
+	            <label>是否处罚:</label>
+	            <label class="rd"><input name="punish" type="radio" value="true" class="easyui-validatebox">处罚</label>
+	            <label class="rd"><input name="punish" type="radio" value="false" class="easyui-validatebox">未处罚</label> 
+	        </div>
+	        <div class="fitem">  
+	            <label>是否晚育:</label>
+	            <label class="rd"><input name="late" type="radio" value="true" class="easyui-validatebox">晚育</label>
+	            <label class="rd"><input name="late" type="radio" value="false" class="easyui-validatebox">早育</label> 
+	        </div>
+	        <div class="fitem">  
 	            <label>是否存活:</label>
 	            <label class="rd"><input name="survival" type="radio" value="true" class="easyui-validatebox">存活</label>
 	            <label class="rd"><input name="survival" type="radio" value="false" class="easyui-validatebox">死亡</label> 
@@ -476,15 +494,12 @@
 	</div>
 </div>
 <script>
-	/** 添加子女 */
-	function addChild() {
-		
-	}
 	/** 新建卡信息 */
 	function doNewCard(title, url) {
 		$('#dlg').dialog('open').dialog('setTitle', title);  
         $('#fm').form('clear');
         $('#departmentSel').val('${user.getId()}');
+        $('#childrenList').html('');
         saveUrl = url;
 	}
 	/** 编辑卡信息 */
@@ -502,7 +517,9 @@
             if (!!row['childrens'] && !!row.childrens.length) {
 				for (var i = 0, children; children = row.childrens[i]; i ++) {
 	            	renderChildren(children.name, children.size, children.nation, children.code, 
-	            			children.birth, children.gender, children.survival, children.plan, children.id);	
+	            			children.birth, children.gender, 
+	            			children.punish, children.late,
+	            			children.survival, children.plan, children.id);	
 				}
             }
         }  
@@ -520,6 +537,7 @@
 						for (var i = 0, children; children = val[i]; i ++)
 		            		renderChildrenDetail(children.name, children.size, children.nation,
 		            				children.code, children.birth, children.gender, 
+		            				children.punish, children.late,
 		            				children.survival, children.plan, children.id);
         			}
         		} else {
@@ -546,6 +564,8 @@
             		liVal.push($this.data('code'));
             		liVal.push($this.data('birth'));
             		liVal.push($this.data('gender'));
+            		liVal.push($this.data('punish'));
+            		liVal.push($this.data('late'));
             		liVal.push($this.data('survival'));
             		liVal.push($this.data('plan'));
             		liVal.push($this.data('childrenid'));
@@ -574,23 +594,23 @@
 		if (newChildren.length > 32) {
 			var arr = newChildren.split('&'), arrVal = [];
 			for (var i = 0, str; str = arr[i]; i ++)
-				arrVal.push(str.split('=')[1]);
+				arrVal.push(decodeURIComponent(str.split('=')[1]));
 			renderChildren(arrVal[0], arrVal[1], arrVal[2], arrVal[3], arrVal[4], arrVal[5], 
-					arrVal[6], arrVal[7], arrVal[8]);
+					arrVal[6], arrVal[7], arrVal[8], arrVal[9], arrVal[10]);
 			$('#children-dlg').dialog('close');
 		}
 	}
 	/** 渲染子女信息. */
-	function renderChildren(name, size, nation, code, birth, gender, survival, plan, id) {
-		var list = $('#childrenList'), newItem = _renderChildren(name, size, nation, code, birth, gender, survival, plan, id);
+	function renderChildren(name, size, nation, code, birth, gender, punish, late, survival, plan, id) {
+		var list = $('#childrenList'), newItem = _renderChildren(name, size, nation, code, birth, gender, punish, late, survival, plan, id);
 		newItem.push(name + '(' + code + ')');
 		newItem.push('<a href="javascript:void(0)" onclick="removeChildren(this.parentNode)" title="删除子女记录">X</a>');
 		newItem.push('</li>');
 		list.append(newItem.join(''));
 	}
 	
-	function renderChildrenDetail(name, size, nation, code, birth, gender, survival, plan, id) {
-		var list = $('#detailChildrenList'), newItem = _renderChildren(name, size, nation, code, birth, gender, survival, plan, id);
+	function renderChildrenDetail(name, size, nation, code, birth, gender, punish, late, survival, plan, id) {
+		var list = $('#detailChildrenList'), newItem = _renderChildren(name, size, nation, code, birth, gender, punish, late, survival, plan, id);
 		newItem.push(name + '(' + code + ')');
 		newItem.push('<a href="javascript:void(0)" onclick="doDetailChildren(this.parentNode)" title="查看子女记录">查看</a>');
 		newItem.push('</li>');
@@ -598,7 +618,7 @@
 	}
 	
 	/** render children of data. */
-	function _renderChildren(name, size, nation, code, birth, gender, survival, plan, id) {
+	function _renderChildren(name, size, nation, code, birth, gender, punish, late, survival, plan, id) {
 		return ['<li ',
 	             '" data-name="', name,
 	             '" data-size="', size,
@@ -606,6 +626,8 @@
 	             '" data-code="', code,
 	             '" data-birth="', birth,
 	             '" data-gender="', gender,
+	             '" data-late="', late,
+	             '" data-punish="', punish,
 	             '" data-survival="', survival,
 	             '" data-plan="', plan,
 	             '" data-childrenid="', id,
@@ -630,6 +652,8 @@
 		$('#detail_children_code').html(row.data('code'));
 		$('#detail_children_birth').html(row.data('birth'));
 		$('#detail_children_gender').html(row.data('gender'));
+		$('#detail_children_punish').html(row.data('punish') ? '处罚' : '未处罚');
+		$('#detail_children_late').html(row.data('late') ? '晚育' : '早育');
 		$('#detail_children_survivalTxt').html(row.data('survival') ? '存活' : '死亡');
 		$('#detail_children_planTxt').html(row.data('plan') ? '计划内' : '计划外');
 	}

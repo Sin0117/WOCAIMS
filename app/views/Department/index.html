@@ -21,7 +21,7 @@
 	
 	<div id="toolbar">  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="doNew('新建部门', '@{Department.add}')">新建部门</a>  
-	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEdit('修改部门', '@{Department.update}')">修改部门</a>  
+	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="doEditDep('修改部门', '@{Department.update}')">修改部门</a>  
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="doDestroy('确定要删除这个部门吗？包括下级部门以及部门管理员。', '@{Department.del}')">删除部门</a>  
 	</div>  
 	  
@@ -39,7 +39,7 @@
 	        </div>
 	        <div class="fitem">  
 	            <label>上级部门:</label>
-	            <select id="parentDep" name="parent" required="true">
+	            <select id="departmentSel" name="parent" required="true">
 	            	#{list items: list, as: 'division'}
 	            	<option value="${division._id}">${division.name}</option>
 	            	#{/list}
@@ -52,3 +52,18 @@
 	    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>  
 	</div>
 </div>
+<script>
+function doEditDep(title, url){  
+    var row = $('#dg').datagrid('getSelected');  
+    if (row) {  
+        $('#dlg').dialog('open').dialog('setTitle', title);  
+        $('#fm').form('load', row);
+        if (!row.parent) {
+            $('#departmentSel').val(row.id);
+        } else {
+        	$('#departmentSel').val(row.parent.id);
+        }
+        saveUrl = url + '?id='+row.id;  
+    }  
+}
+</script>
