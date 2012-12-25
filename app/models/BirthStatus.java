@@ -32,7 +32,7 @@ public class BirthStatus extends Model {
 	// 生育状况
 	public String status;
 	// 计划内外
-	public Boolean plan;
+	public boolean plan;
 	// 计外原因
 	public String planInfo;
 	// 是否处罚
@@ -40,7 +40,7 @@ public class BirthStatus extends Model {
 	// 是否晚育
 	public boolean late;
 	// 是否存活
-	public Boolean survival;
+	public boolean survival;
 	// 准生证号
 	public String code;
 	// 户口性质
