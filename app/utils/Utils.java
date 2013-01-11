@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,6 +92,26 @@ public class Utils {
 			return true;
 		}
 		return false;
+	}
+	
+	/** 把小数转换成百分比. */
+	public static String toPercentage(double d) {
+		if (Double.isNaN(d))
+			d = 0;
+		if (d > 0 && d < 0.0001)
+			d = 0.0001;
+		BigDecimal bg = new BigDecimal(d);
+        d = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		String str = String.valueOf(d * 100);
+		int index = str.indexOf(".");
+		if (index == -1)
+			return str + "%";
+		else {
+			if (str.length() > index + 3)
+				return str.substring(0, index + 3) + "%";
+			else
+				return str.substring(0, index + 2) + "%";
+		}
 	}
 	
 	/** 转化成编码. */

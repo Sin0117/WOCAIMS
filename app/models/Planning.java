@@ -35,7 +35,7 @@ public class Planning extends Model {
 	// 环扎数
 	public int cerclage;
 	// 环扎率
-	public float cerclageRate;
+	public String cerclageRate;
 	// 领独生子女证人数
 	public int childCard;
 	// 二孩及以上妇女数
@@ -43,11 +43,11 @@ public class Planning extends Model {
 	// 放环数
 	public int putRing;
 	// 放环率
-	public float putRingRate;
+	public String putRingRate;
 	// 结扎数
 	public int ligation;
 	// 结扎率
-	public float ligationRate;
+	public String ligationRate;
 	// 出生总数
 	public int bornTotal; 
 	// 一孩
@@ -103,13 +103,13 @@ public class Planning extends Model {
 	// 引产
 	public int operationInduced;
 	// 汉族独生子女领证率
-	public float nationality;
+	public String nationality;
 	// 综合节育率
-	public float comprehensive; 
+	public String comprehensive; 
 	// 晚婚率
-	public float lastMarriage;
+	public String lastMarriage;
 	// 晚育率
-	public float lastPregnant;
+	public String lastPregnant;
 	// 单位负责人
 	public String charge;
 	// 填表人
@@ -120,6 +120,9 @@ public class Planning extends Model {
 	public Date modifyAt;
 	// 审核状态
 	public AuditType status;
+	// 当前审核部门
+	@Reference(ignoreMissing = false)
+	public Department auditDep;
 	
 	/** json序列化. */
 	public Map<String, Object> serialize() {

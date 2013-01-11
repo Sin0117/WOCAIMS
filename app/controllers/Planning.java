@@ -20,6 +20,7 @@ import jxl.write.WritableWorkbook;
 import models.enums.AuditType;
 import play.modules.morphia.Model.MorphiaQuery;
 import play.mvc.Controller;
+import utils.Utils;
 
 import com.google.gson.GsonBuilder;
 import com.mongodb.util.JSON;
@@ -638,12 +639,14 @@ public class Planning extends Controller {
 	public static void list(String keyword, String department, int page, int rows) {
 		rows = rows != 0 ? rows : PAGE_SIZE;
 		List<models.Planning> lists = null;
+		models.Administrator admin = models.Administrator.findById(session.get("admin"));
 		if (department == null || "".equals(department)) {
 			lists = findAll(keyword, page, rows);
 		} else {
 			models.Department dep = models.Department.findById(department);
 			if (dep != null) {
 				MorphiaQuery query = models.Planning.find();
+				query.filter("auditDep", admin.department);
 				if (keyword != null && !"".equals(keyword))
 					query.filter("name", keyword);
 				query.filter("department", dep);
@@ -666,11 +669,13 @@ public class Planning extends Controller {
 	
 	/** 获取当前操作者的全部数据. */
 	private static List<models.Planning> findAll(String keyword, int page, int rows) {
+		models.Administrator admin = models.Administrator.findById(session.get("admin"));
 		List<models.Department> departments = Secure.getDepartments();
 		List<models.Planning> result = new ArrayList<models.Planning>();
 		int size = 0, offset = page * rows - rows, end = offset + rows;
 		for (models.Department department : departments) {
 			MorphiaQuery query = models.Planning.find("byDepartment", department);
+			query.filter("auditDep", admin.department);
 			if (keyword != null && !"".equals(keyword))
 				query.filter("name", keyword);
 			List<models.Planning> data = query.asList();
@@ -697,8 +702,8 @@ public class Planning extends Controller {
 			models.Administrator admin = models.Administrator.findById(adminId);
 			models.Planning.find("byDepartment", admin.department).delete();
 			models.Planning newData = new models.Planning();
-			List<models.Department> deps = departments();
 			Date newDate = new Date();
+			departments();
 			newData.department = admin.department;
 			newData.beginPopulation = getBeginPopulation();
 			newData.endPopulation = getEndPopulation();
@@ -752,6 +757,7 @@ public class Planning extends Controller {
 			newData.status = AuditType.AUDIT;
 			newData.createAt = newDate;
 			newData.modifyAt = newDate;
+			newData.auditDep = admin.department;
 			newData.save();
 			result.put("success", true);
 		} catch (Exception exc) {
@@ -857,12 +863,11 @@ public class Planning extends Controller {
 		return count;
 	}
 	// 环扎率
-	private static float getCerclageRate() {
-		float count = 0;
-		float num = (float)getCerclage();
+	private static String getCerclageRate() {
+		double count = 0, num = getCerclage();
 		for (models.Department dep : deps)
-			count += (float)models.Household.find("byDepartment", dep).count();
-		return num / count;
+			count += models.Household.find("byDepartment", dep).count();
+		return Utils.toPercentage(num / count);
 	}
 	// 领独生子女证人数
 	private static int getChildCard() {
@@ -893,7 +898,7 @@ public class Planning extends Controller {
 			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
 			int size = 0;
 			for (models.WomenCard card : list) {
-				if (card.oligogenics.measureDate != null)
+				if (card.oligogenics != null && card.oligogenics.measureDate != null)
 					size ++;
 			}
 			count += size;
@@ -901,12 +906,12 @@ public class Planning extends Controller {
 		return count;
 	}
 	// 放环率
-	private static float getPutRingRate() {
-		float count = 0;
+	private static String getPutRingRate() {
+		double count = 0;
 		for (models.Department dep : deps) {
 			count += models.WomenCard.find("byDepartment", dep).count();
 		}
-		return getPutRing() / count;
+		return Utils.toPercentage(getPutRing() / count);
 	}
 	// 结扎数
 	private static int getLigation() {
@@ -923,12 +928,12 @@ public class Planning extends Controller {
 		return count;
 	}
 	// 结扎率
-	private static float getLigationRate() {
-		float count = 0;
+	private static String getLigationRate() {
+		double count = 0;
 		for (models.Department dep : deps) {
 			count += models.Workers.find("byDepartment", dep).count();
 		}
-		return getLigation() / count;
+		return Utils.toPercentage(getLigation() / count);
 	}
 	// 出生总数
 	private static int getBornTotal() {
@@ -982,7 +987,8 @@ public class Planning extends Controller {
 			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
 			int size = 0;
 			for (models.WomenCard card : list) {
-				if (card.manFirstMarriage.getYear() == card.manCurrentMarriage.getYear())
+				if (card.manFirstMarriage != null && card.manCurrentMarriage != null &&
+						card.manFirstMarriage.getYear() == card.manCurrentMarriage.getYear())
 					size ++;
 			}
 			count += size;
@@ -994,10 +1000,9 @@ public class Planning extends Controller {
 		int count = 0;
 		for (models.Department dep : deps) {
 			List<models.WomenCard> list = models.WomenCard.find("byDepartment", dep).asList();
-			int year = new Date().getYear();
-			int size = 0;
+			int year = new Date().getYear(), size = 0;
 			for (models.WomenCard card : list) {
-				if (year - card.manBirth.getYear() > 25)
+				if (card.manBirth != null && year - card.manBirth.getYear() > 25)
 					size ++;
 			}
 			count += size;
@@ -1105,40 +1110,43 @@ public class Planning extends Controller {
 		return 0;
 	}
 	// 汉族独生子女领证率
-	private static int getNationality() {
-		int count = 0;
+	private static String getNationality() {
+		/*
+		double count = 0, size = 0;
 		for (models.Department dep : deps) {
-			count += models.OnlyChildren.find("byDepartment", dep).filter("nation", "汉").count() +
-			models.OnlyChildren.find("byDepartment", dep).filter("nation", "汉族").count();
+			count += models.BirthStatus.find("byDepartment", dep).filter("nation", "汉").filter("size", 1).count() +
+					models.BirthStatus.find("byDepartment", dep).filter("nation", "汉族").filter("size", 1).count();
+			size += models.OnlyChildren.find("byDepartment", dep).filter("nation", "汉").count() +
+					models.OnlyChildren.find("byDepartment", dep).filter("nation", "汉族").count();
 		}
-		return count;
+		return Utils.toPercentage(size / count);
+		*/
+		return "100%";
 	}
 	// 综合节育率
-	private static float getComprehensive() {
+	private static String getComprehensive() {
 		return getLigationRate();
 	}
 	// 晚婚率
-	private static float getLastMarriage() {
-		float count = 0;
-		float size = 0;
+	private static String getLastMarriage() {
+		double count = 0, size = 0;
 		for (models.Department dep : deps) {
 			MorphiaQuery q = models.WomenCard.find("byDepartment", dep);
-			count += (float)q.count();
+			count += q.count();
 			List<models.WomenCard> list = q.asList();
 			for (models.WomenCard card : list) {
 				if (card.womanFirstMarriage.getYear() > 22)
 					size ++;
 			}
 		}
-		return size / count;
+		return Utils.toPercentage(size / count);
 	}
 	// 晚育率
-	private static float getLastPregnant() {
-		float count = 0;
-		float size = 0;
+	private static String getLastPregnant() {
+		double count = 0, size = 0;
 		for (models.Department dep : deps) {
 			MorphiaQuery q = models.BirthStatus.find("byDepartment", dep).filter("size", 1);
-			count += (float)q.count();
+			count += q.count();
 			List<models.BirthStatus> list = q.asList();
 			int year = new Date().getYear();
 			for (models.BirthStatus card : list) {
@@ -1146,19 +1154,19 @@ public class Planning extends Controller {
 					size ++;
 			}
 		}
-		return size / count;
+		return Utils.toPercentage(size / count);
 	}
 	
 	/** 删除操作 */
 	public static void back(String id) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			String adminId = session.get("admin");
-			models.Administrator admin = models.Administrator.findById(adminId);
+			models.Administrator admin = models.Administrator.findById(session.get("admin"));
 			if (admin.getId().toString().equals(id)) {
 				models.Planning.findById(id).delete();
 			} else {
 				models.Planning delData = models.Planning.findById(id);
+				delData.auditDep = delData.department;
 				delData.status = AuditType.BACK;
 				delData.save();
 			}
@@ -1173,8 +1181,13 @@ public class Planning extends Controller {
 	public static void pass(String id) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			models.Administrator admin = models.Administrator.findById(session.get("admin"));
 			models.Planning passData = models.Planning.findById(id);
-			passData.status = AuditType.PASS;
+			if (admin.department.parent != null) {
+				passData.auditDep = admin.department.parent;
+			} else {
+				passData.status = AuditType.PASS;
+			}
 			passData.save();
 			result.put("success", true);
 		} catch (Exception exc) {
@@ -1186,13 +1199,13 @@ public class Planning extends Controller {
 	/** 修改操作 */
 	public static void update(String id, int beginPopulation, int endPopulation, int maleWorker, int femaleWorker, 
 			int childBearingAge, int marriedChildBearingAge, int marriedNotBrood, int childWomens, int cerclage, 
-			float cerclageRate, int childCard, int childrenWomens, int putRing, float putRingRate, int ligation, float ligationRate, 
+			String cerclageRate, int childCard, int childrenWomens, int putRing, String putRingRate, int ligation, String ligationRate, 
 			int bornTotal, int child, int children, int womenFirstMarriage, int womens23years, int menFirstMarriage, 
 			int men25years, int finalSelection, int finalMaleFirm, int finalFemaleFirm, int finalPutRing, int finalSkinBuried, 
 			int finalCondoms, int finalExternal, int finalOther, int now, int nowChild, int nowChildren, int bornThisYear, 
 			int bornNextYear, int operation, int operationMaleFirm, int operationFemaleFirm, int operationPutRing, 
-			int operationTakeRing, int operationAbortion, int operationInduced, float nationality, float comprehensive, 
-			float lastMarriage, float lastPregnant, String charge) {
+			int operationTakeRing, int operationAbortion, int operationInduced, String nationality, String comprehensive, 
+			String lastMarriage, String lastPregnant, String charge) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			String adminId = session.get("admin");
